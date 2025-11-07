@@ -16,6 +16,14 @@ const popularCommunities = [
   },
   {
     id: "2",
+    name: "Gapoktan Pondokrejo",
+    category: "PERTANIAN",
+    description: "Gabungan Kelompok Tani untuk petani padi, sayur, dan tanaman hias",
+    members: 38,
+    slug: "gapoktan-pondokrejo"
+  },
+  {
+    id: "3",
     name: "Pemuda Olahraga",
     category: "OLAHRAGA",
     description: "Mengembangkan bakat olahraga pemuda Kalurahan Pondokrejo",
@@ -23,7 +31,7 @@ const popularCommunities = [
     slug: "pemuda-olahraga"
   },
   {
-    id: "3",
+    id: "4",
     name: "Seni Budaya",
     category: "SENI",
     description: "Melestarikan seni dan budaya tradisional Kalurahan Pondokrejo",
@@ -31,12 +39,36 @@ const popularCommunities = [
     slug: "seni-budaya"
   },
   {
-    id: "4",
+    id: "5",
     name: "Lingkungan Hijau",
     category: "LINGKUNGAN",
     description: "Komunitas peduli lingkungan dan penghijauan desa",
     members: 38,
     slug: "lingkungan-hijau"
+  },
+  {
+    id: "6",
+    name: "Internet Marketing Desa",
+    category: "DIGITAL",
+    description: "Pelatihan konten, SEO, dan media sosial untuk UMKM",
+    members: 25,
+    slug: "internet-marketing-desa"
+  },
+  {
+    id: "7",
+    name: "Karang Taruna Pondokrejo",
+    category: "PEMUDA",
+    description: "Organisasi kepemudaan sebagai penggerak kegiatan pemuda",
+    members: 42,
+    slug: "karang-taruna-pondokrejo"
+  },
+  {
+    id: "8",
+    name: "Taman Terasa Ngaji (TTG)",
+    category: "RELIGI",
+    description: "Pengajian rutin untuk anak-anak & remaja",
+    members: 35,
+    slug: "taman-terasa-ngaji"
   }
 ];
 
@@ -72,16 +104,20 @@ const upcomingEvents = [
 
 const categoryColors = {
   UMKM: "bg-blue-100 text-blue-800",
-  OLAHRAGA: "bg-green-100 text-green-800",
+  PERTANIAN: "bg-green-100 text-green-800",
+  OLAHRAGA: "bg-emerald-100 text-emerald-800",
   SENI: "bg-purple-100 text-purple-800",
-  LINGKUNGAN: "bg-emerald-100 text-emerald-800",
-  INTERNET_MARKETING: "bg-indigo-100 text-indigo-800",
-  TTG: "bg-orange-100 text-orange-800",
-  RELIGI: "bg-yellow-100 text-yellow-800",
+  LINGKUNGAN: "bg-teal-100 text-teal-800",
+  DIGITAL: "bg-indigo-100 text-indigo-800",
   PEMUDA: "bg-red-100 text-red-800",
-  WANITA: "bg-pink-100 text-pink-800",
+  RELIGI: "bg-yellow-100 text-yellow-800",
+  KESEHATAN: "bg-pink-100 text-pink-800",
   PENDIDIKAN: "bg-cyan-100 text-cyan-800",
-  KESEHATAN: "bg-teal-100 text-teal-800",
+  EKONOMI: "bg-orange-100 text-orange-800",
+  SOSIAL: "bg-amber-100 text-amber-800",
+  BUDAYA: "bg-lime-100 text-lime-800",
+  KELUARGA: "bg-rose-100 text-rose-800",
+  INOVASI: "bg-violet-100 text-violet-800",
   LAINNYA: "bg-gray-100 text-gray-800"
 };
 

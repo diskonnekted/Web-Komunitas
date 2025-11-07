@@ -13,32 +13,36 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Users, Building, Mail, Phone, MapPin, FileText, CheckCircle, AlertCircle } from "lucide-react";
 
 const categories = [
-  { value: "UMKM", label: "UMKM (Usaha Mikro Kecil Menengah)" },
+  { value: "PERTANIAN", label: "Pertanian & Lingkungan" },
+  { value: "EKONOMI", label: "Ekonomi & UMKM" },
+  { value: "DIGITAL", label: "Digital & Literasi" },
   { value: "OLAHRAGA", label: "Olahraga" },
-  { value: "SENI", label: "Seni & Budaya" },
-  { value: "LINGKUNGAN", label: "Lingkungan Hidup" },
-  { value: "INTERNET_MARKETING", label: "Internet Marketing" },
-  { value: "TTG", label: "Teknologi Tepat Guna" },
-  { value: "RELIGI", label: "Keagamaan" },
-  { value: "PEMUDA", label: "Pemuda & Remaja" },
-  { value: "WANITA", label: "Perempuan" },
-  { value: "PENDIDIKAN", label: "Pendidikan" },
   { value: "KESEHATAN", label: "Kesehatan" },
+  { value: "RELIGI", label: "Keagamaan" },
+  { value: "SOSIAL", label: "Sosial" },
+  { value: "BUDAYA", label: "Seni & Budaya" },
+  { value: "KELUARGA", label: "Keluarga & Pemberdayaan" },
+  { value: "PEMUDA", label: "Pemuda & Inovasi" },
+  { value: "PENDIDIKAN", label: "Pendidikan" },
+  { value: "INOVASI", label: "Inovasi" },
+  { value: "LINGKUNGAN", label: "Lingkungan" },
   { value: "LAINNYA", label: "Lainnya" }
 ];
 
 const categoryColors = {
-  UMKM: "bg-blue-100 text-blue-800",
-  OLAHRAGA: "bg-green-100 text-green-800",
-  SENI: "bg-purple-100 text-purple-800",
-  LINGKUNGAN: "bg-emerald-100 text-emerald-800",
-  INTERNET_MARKETING: "bg-indigo-100 text-indigo-800",
-  TTG: "bg-orange-100 text-orange-800",
+  PERTANIAN: "bg-green-100 text-green-800",
+  EKONOMI: "bg-blue-100 text-blue-800",
+  DIGITAL: "bg-indigo-100 text-indigo-800",
+  OLAHRAGA: "bg-emerald-100 text-emerald-800",
+  KESEHATAN: "bg-red-100 text-red-800",
   RELIGI: "bg-yellow-100 text-yellow-800",
-  PEMUDA: "bg-red-100 text-red-800",
-  WANITA: "bg-pink-100 text-pink-800",
-  PENDIDIKAN: "bg-cyan-100 text-cyan-800",
-  KESEHATAN: "bg-teal-100 text-teal-800",
+  SOSIAL: "bg-orange-100 text-orange-800",
+  BUDAYA: "bg-purple-100 text-purple-800",
+  KELUARGA: "bg-pink-100 text-pink-800",
+  PEMUDA: "bg-cyan-100 text-cyan-800",
+  PENDIDIKAN: "bg-teal-100 text-teal-800",
+  INOVASI: "bg-violet-100 text-violet-800",
+  LINGKUNGAN: "bg-lime-100 text-lime-800",
   LAINNYA: "bg-gray-100 text-gray-800"
 };
 

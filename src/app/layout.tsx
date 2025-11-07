@@ -1,37 +1,28 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import Navigation from "@/components/navigation";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
-  title: "Z.ai Code Scaffold - AI-Powered Development",
-  description: "Modern Next.js scaffold optimized for AI-powered development with Z.ai. Built with TypeScript, Tailwind CSS, and shadcn/ui.",
-  keywords: ["Z.ai", "Next.js", "TypeScript", "Tailwind CSS", "shadcn/ui", "AI development", "React"],
-  authors: [{ name: "Z.ai Team" }],
-  icons: {
-    icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
-  },
+  title: "Komunitas Kalurahan Pondokrejo",
+  description: "Wadah digital terpadu bagi seluruh komunitas warga Kalurahan Pondokrejo, Sleman, Yogyakarta",
+  keywords: ["Kalurahan Pondokrejo", "Komunitas", "Sleman", "Yogyakarta", "UMKM", "Olahraga", "Seni"],
+  authors: [{ name: "Komunitas Kalurahan Pondokrejo" }],
   openGraph: {
-    title: "Z.ai Code Scaffold",
-    description: "AI-powered development with modern React stack",
-    url: "https://chat.z.ai",
-    siteName: "Z.ai",
+    title: "Komunitas Kalurahan Pondokrejo",
+    description: "Wadah digital terpadu bagi seluruh komunitas warga Kalurahan Pondokrejo",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Z.ai Code Scaffold",
-    description: "AI-powered development with modern React stack",
+    title: "Komunitas Kalurahan Pondokrejo",
+    description: "Wadah digital terpadu bagi seluruh komunitas warga Kalurahan Pondokrejo",
   },
 };
 
@@ -41,11 +32,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="id" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
+        className={`${inter.variable} font-sans antialiased bg-background text-foreground`}
       >
-        {children}
+        <Navigation />
+        <main className="min-h-screen">
+          {children}
+        </main>
+        <footer className="bg-primary text-primary-foreground py-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center">
+              <p className="text-sm">
+                © {new Date().getFullYear()} Komunitas Kalurahan Pondokrejo. Hak Cipta Dilindungi.
+              </p>
+              <p className="text-xs mt-2 opacity-75">
+                Kalurahan Pondokrejo, Sleman, Yogyakarta
+              </p>
+            </div>
+          </div>
+        </footer>
         <Toaster />
       </body>
     </html>

@@ -1,141 +1,215 @@
-# 🚀 Welcome to Z.ai Code Scaffold
+# Website Komunitas Kalurahan Pondokrejo
 
-A modern, production-ready web application scaffold powered by cutting-edge technologies, designed to accelerate your development with [Z.ai](https://chat.z.ai)'s AI-powered coding assistance.
+Website komunitas berbasis web untuk Kalurahan Pondokrejo, Sleman, Yogyakarta, sebagai wadah digital terpadu bagi seluruh komunitas warga (UMKM, internet marketing, olahraga, TTG, seni, lingkungan, dll).
 
-## ✨ Technology Stack
+## Deskripsi
 
-This scaffold provides a robust foundation built with:
+Website ini dibangun untuk memfasilitasi koordinasi, informasi, dan kolaborasi antar komunitas yang ada di Kalurahan Pondokrejo. Dengan adanya platform digital ini, diharapkan setiap komunitas dapat mempromosikan kegiatannya, warga dapat dengan mudah menemukan informasi tentang komunitas yang sesuai dengan minatnya, serta memfasilitasi komunikasi yang lebih efektif antar warga.
 
-### 🎯 Core Framework
-- **⚡ Next.js 15** - The React framework for production with App Router
-- **📘 TypeScript 5** - Type-safe JavaScript for better developer experience
-- **🎨 Tailwind CSS 4** - Utility-first CSS framework for rapid UI development
+## Fitur Utama
 
-### 🧩 UI Components & Styling
-- **🧩 shadcn/ui** - High-quality, accessible components built on Radix UI
-- **🎯 Lucide React** - Beautiful & consistent icon library
-- **🌈 Framer Motion** - Production-ready motion library for React
-- **🎨 Next Themes** - Perfect dark mode in 2 lines of code
+### Frontend (Publik)
+- **Halaman Utama**: Hero section, card komunitas populer, event terdekat, dan call-to-action
+- **Direktori Komunitas**: Daftar semua komunitas dengan filter berdasarkan kategori
+- **Detail Komunitas**: Informasi lengkap, anggota, jadwal kegiatan, dan galeri
+- **Kalender Kegiatan**: Kalender interaktif dengan daftar kegiatan berbasis tanggal
+- **Peta Lokasi**: Peta interaktif dengan marker lokasi kegiatan
+- **Galeri**: Galeri foto/video kegiatan dari semua komunitas
+- **Berita & Pengumuman**: Artikel/pengumuman dari admin
+- **Form Pendaftaran**: Formulir untuk warga mengusulkan komunitas baru
 
-### 📋 Forms & Validation
-- **🎣 React Hook Form** - Performant forms with easy validation
-- **✅ Zod** - TypeScript-first schema validation
+### Backend (Admin Panel)
+- **Autentikasi**: Login admin sederhana (username/password + session-based auth)
+- **Dashboard**: Ringkasan statistik dan informasi penting
+- **Manajemen Komunitas**: Tambah/edit/hapus komunitas
+- **Manajemen Kegiatan**: Buat dan kelola event komunitas
+- **Manajemen Berita**: CRUD berita dan pengumuman
+- **Manajemen Galeri**: Upload foto/video
+- **Permintaan Komunitas**: Verifikasi permintaan komunitas baru
 
-### 🔄 State Management & Data Fetching
-- **🐻 Zustand** - Simple, scalable state management
-- **🔄 TanStack Query** - Powerful data synchronization for React
-- **🌐 Axios** - Promise-based HTTP client
+## Teknologi yang Digunakan
 
-### 🗄️ Database & Backend
-- **🗄️ Prisma** - Next-generation Node.js and TypeScript ORM
-- **🔐 NextAuth.js** - Complete open-source authentication solution
+### Core Framework
+- **Frontend**: Next.js 15 dengan App Router
+- **Language**: TypeScript 5
+- **Styling**: Tailwind CSS 4
+- **UI Components**: shadcn/ui component library
 
-### 🎨 Advanced UI Features
-- **📊 TanStack Table** - Headless UI for building tables and datagrids
-- **🖱️ DND Kit** - Modern drag and drop toolkit for React
-- **📊 Recharts** - Redefined chart library built with React and D3
-- **🖼️ Sharp** - High performance image processing
+### Database & Backend
+- **Database**: SQLite dengan Prisma ORM
+- **Authentication**: Session-based authentication
+- **State Management**: Zustand untuk client state, TanStack Query untuk server state
 
-### 🌍 Internationalization & Utilities
-- **🌍 Next Intl** - Internationalization library for Next.js
-- **📅 Date-fns** - Modern JavaScript date utility library
-- **🪝 ReactUse** - Collection of essential React hooks for modern development
+### Development Tools
+- **Package Manager**: npm
+- **Code Quality**: ESLint
+- **Development Server**:tsx
 
-## 🎯 Why This Scaffold?
-
-- **🏎️ Fast Development** - Pre-configured tooling and best practices
-- **🎨 Beautiful UI** - Complete shadcn/ui component library with advanced interactions
-- **🔒 Type Safety** - Full TypeScript configuration with Zod validation
-- **📱 Responsive** - Mobile-first design principles with smooth animations
-- **🗄️ Database Ready** - Prisma ORM configured for rapid backend development
-- **🔐 Auth Included** - NextAuth.js for secure authentication flows
-- **📊 Data Visualization** - Charts, tables, and drag-and-drop functionality
-- **🌍 i18n Ready** - Multi-language support with Next Intl
-- **🚀 Production Ready** - Optimized build and deployment settings
-- **🤖 AI-Friendly** - Structured codebase perfect for AI assistance
-
-## 🚀 Quick Start
-
-```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Start production server
-npm start
-```
-
-Open [http://localhost:3000](http://localhost:3000) to see your application running.
-
-## 🤖 Powered by Z.ai
-
-This scaffold is optimized for use with [Z.ai](https://chat.z.ai) - your AI assistant for:
-
-- **💻 Code Generation** - Generate components, pages, and features instantly
-- **🎨 UI Development** - Create beautiful interfaces with AI assistance  
-- **🔧 Bug Fixing** - Identify and resolve issues with intelligent suggestions
-- **📝 Documentation** - Auto-generate comprehensive documentation
-- **🚀 Optimization** - Performance improvements and best practices
-
-Ready to build something amazing? Start chatting with Z.ai at [chat.z.ai](https://chat.z.ai) and experience the future of AI-powered development!
-
-## 📁 Project Structure
+## Struktur Aplikasi
 
 ```
 src/
-├── app/                 # Next.js App Router pages
-├── components/          # Reusable React components
-│   └── ui/             # shadcn/ui components
-├── hooks/              # Custom React hooks
-└── lib/                # Utility functions and configurations
+├── app/                    # Next.js App Router
+│   ├── admin/             # Admin panel pages
+│   ├── berita/            # News & announcements
+│   ├── daftar-komunitas/   # Community registration
+│   ├── galeri/            # Photo/video gallery
+│   ├── kegiatan/          # Activities & events
+│   ├── komunitas/         # Community pages
+│   ├── lokasi/            # Location & map
+│   ├── layout.tsx         # Root layout
+│   └── page.tsx           # Home page
+├── components/            # Reusable components
+│   ├── ui/               # shadcn/ui components
+│   └── navigation.tsx    # Navigation component
+├── hooks/                # Custom React hooks
+├── lib/                  # Utility libraries
+│   ├── db.ts            # Database client
+│   ├── socket.ts        # Socket.io configuration
+│   └── utils.ts         # Utility functions
+└── app/globals.css       # Global styles
 ```
 
-## 🎨 Available Features & Components
+## Database Schema
 
-This scaffold includes a comprehensive set of modern web development tools:
+Aplikasi menggunakan database dengan model utama:
+- **Community**: Data komunitas (nama, deskripsi, kategori, kontak)
+- **Activity**: Kegiatan/event (judul, deskripsi, tanggal, lokasi)
+- **News**: Berita dan pengumuman
+- **Gallery**: Foto dan video kegiatan
+- **Location**: Lokasi kegiatan dengan koordinat
+- **Admin**: Data admin untuk autentikasi
+- **CommunityRequest**: Permintaan komunitas baru
 
-### 🧩 UI Components (shadcn/ui)
-- **Layout**: Card, Separator, Aspect Ratio, Resizable Panels
-- **Forms**: Input, Textarea, Select, Checkbox, Radio Group, Switch
-- **Feedback**: Alert, Toast (Sonner), Progress, Skeleton
-- **Navigation**: Breadcrumb, Menubar, Navigation Menu, Pagination
-- **Overlay**: Dialog, Sheet, Popover, Tooltip, Hover Card
-- **Data Display**: Badge, Avatar, Calendar
+## Instalasi & Pengaturan
 
-### 📊 Advanced Data Features
-- **Tables**: Powerful data tables with sorting, filtering, pagination (TanStack Table)
-- **Charts**: Beautiful visualizations with Recharts
-- **Forms**: Type-safe forms with React Hook Form + Zod validation
+### Prasyarat
+- Node.js 18+ 
+- npm atau yarn
 
-### 🎨 Interactive Features
-- **Animations**: Smooth micro-interactions with Framer Motion
-- **Drag & Drop**: Modern drag-and-drop functionality with DND Kit
-- **Theme Switching**: Built-in dark/light mode support
+### Langkah-langkah Instalasi
 
-### 🔐 Backend Integration
-- **Authentication**: Ready-to-use auth flows with NextAuth.js
-- **Database**: Type-safe database operations with Prisma
-- **API Client**: HTTP requests with Axios + TanStack Query
-- **State Management**: Simple and scalable with Zustand
+1. **Clone repository**
+   ```bash
+   git clone https://github.com/diskonnekted/Web-Komunitas.git
+   cd Web-Komunitas
+   ```
 
-### 🌍 Production Features
-- **Internationalization**: Multi-language support with Next Intl
-- **Image Optimization**: Automatic image processing with Sharp
-- **Type Safety**: End-to-end TypeScript with Zod validation
-- **Essential Hooks**: 100+ useful React hooks with ReactUse for common patterns
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-## 🤝 Get Started with Z.ai
+3. **Setup environment variables**
+   Buat file `.env` di root directory:
+   ```
+   DATABASE_URL="file:./dev.db"
+   ```
 
-1. **Clone this scaffold** to jumpstart your project
-2. **Visit [chat.z.ai](https://chat.z.ai)** to access your AI coding assistant
-3. **Start building** with intelligent code generation and assistance
-4. **Deploy with confidence** using the production-ready setup
+4. **Setup database**
+   ```bash
+   npm run db:push
+   ```
 
----
+5. **Jalankan development server**
+   ```bash
+   npm run dev
+   ```
 
-Built with ❤️ for the developer community. Supercharged by [Z.ai](https://chat.z.ai) 🚀
+6. **Buka browser**
+   Akses http://localhost:3000
+
+## Penggunaan
+
+### Untuk Pengunjung (Publik)
+1. **Jelajahi Komunitas**: Kunjungi halaman /komunitas untuk melihat daftar komunitas
+2. **Filter Komunitas**: Gunakan filter kategori untuk menemukan komunitas sesuai minat
+3. **Lihat Detail**: Klik komunitas untuk melihat informasi lengkap dan kegiatan
+4. **Cek Kegiatan**: Kunjungi /kegiatan untuk melihat jadwal kegiatan terkini
+5. **Lihat Lokasi**: Akses /lokasi untuk melihat peta lokasi kegiatan
+6. **Galeri**: Kunjungi /galeri untuk melihat dokumentasi kegiatan
+7. **Baca Berita**: Akses /berita untuk informasi terkini
+8. **Daftar Komunitas**: Isi formulir di /daftar-komunitas untuk mengajukan komunitas baru
+
+### Untuk Admin
+1. **Login Admin**: Akses /admin/login
+   - Username: admin
+   - Password: admin123 (untuk demo)
+
+2. **Dashboard**: Setelah login, admin akan diarahkan ke dashboard dengan:
+   - Statistik komunitas, kegiatan, berita
+   - Permintaan komunitas yang menunggu persetujuan
+   - Kegiatan terkini
+
+3. **Manajemen Konten**:
+   - Kelola komunitas (tambah, edit, hapus)
+   - Kelola kegiatan dan event
+   - Publish berita dan pengumuman
+   - Upload media ke galeri
+   - Verifikasi permintaan komunitas baru
+
+## Konfigurasi
+
+### Variabel Lingkungan
+- `DATABASE_URL`: URL koneksi database (SQLite untuk development)
+
+### Database Migration
+Untuk mengubah schema database:
+1. Edit file `prisma/schema.prisma`
+2. Jalankan `npm run db:push` untuk menerapkan perubahan
+
+### Customisasi
+- **Warna**: Edit variabel CSS di `src/app/globals.css`
+- **Konten**: Ubah konten di halaman-halaman yang relevan
+- **Komponen**: Tambah atau modifikasi komponen di `src/components/`
+
+## Deployment
+
+### Development
+```bash
+npm run dev
+```
+
+### Production Build
+```bash
+npm run build
+npm start
+```
+
+### Linting
+```bash
+npm run lint
+```
+
+## Demo Credentials
+
+Untuk mengakses admin panel:
+- **URL**: http://localhost:3000/admin/login
+- **Username**: admin
+- **Password**: admin123
+
+## Kontribusi
+
+1. Fork repository
+2. Buat branch fitur baru (`git checkout -b feature/AmazingFeature`)
+3. Commit perubahan (`git commit -m 'Add some AmazingFeature'`)
+4. Push ke branch (`git push origin feature/AmazingFeature`)
+5. Buka Pull Request
+
+## Lisensi
+
+Hak Cipta © 2024 Komunitas Kalurahan Pondokrejo. Hak Cipta Dilindungi.
+
+## Dukungan
+
+Untuk bantuan atau informasi lebih lanjut, hubungi:
+- Email: admin@pondokrejo.desa.id
+- Telepon: (0274) 123456
+
+## Catatan Pengembangan
+
+- Website ini dibangun dengan fokus pada kemudahan penggunaan untuk admin non-teknis
+- Desain responsif untuk mobile dan desktop
+- Menggunakan bahasa Indonesia secara konsisten
+- Dioptimalkan untuk shared hosting
+- Tidak menggunakan dependensi berat yang sulit di-maintain

@@ -32,7 +32,7 @@ interface CommunityDetailPageProps {
 }
 
 export default async function CommunityDetailPage({ params }: CommunityDetailPageProps) {
-  const slug = params.slug as string;
+  const { slug } = await params;
   
   const community = await db.community.findUnique({
     where: { slug },

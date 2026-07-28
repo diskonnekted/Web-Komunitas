@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { db } from "@/lib/db";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,131 +8,20 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { CalendarDays, MapPin, Users, Mail, Phone, MessageSquare, Clock } from "lucide-react";
 import Link from "next/link";
 
-// Mock data for development
-const communities = {
-  "umkm-pondokrejo": {
-    id: "1",
-    name: "UMKM Pondokrejo",
-    slug: "umkm-pondokrejo",
-    category: "UMKM",
-    description: "Wadah bagi pelaku usaha mikro kecil menengah untuk berkembang bersama. Kami membantu dalam pemasaran, pelatihan, dan pengembangan produk UMKM lokal.",
-    fullDescription: "UMKM Pondokrejo adalah komunitas yang berdedikasi untuk mengembangkan usaha mikro kecil menengah di Kalurahan Pondokrejo. Kami menyediakan berbagai program pelatihan, bimbingan teknis, dan kesempatan pemasaran bagi anggota kami. Dengan semangat gotong royong, kami percaya bahwa setiap UMKM memiliki potensi untuk berkembang dan bersaing di pasar yang lebih luas.",
-    contact: "Budi Santoso",
-    phone: "0812-3456-7890",
-    email: "umkm@pondokrejo.desa.id",
-    address: "Balai Kalurahan Pondokrejo, Sleman, Yogyakarta",
-    members: 45,
-    logo: null,
-    isActive: true,
-    established: "2020-03-15"
-  },
-  "pemuda-olahraga": {
-    id: "2",
-    name: "Pemuda Olahraga",
-    slug: "pemuda-olahraga",
-    category: "OLAHRAGA",
-    description: "Mengembangkan bakat olahraga pemuda Kalurahan Pondokrejo melalui berbagai kegiatan dan turnamen rutin.",
-    fullDescription: "Komunitas Pemuda Olahraga berfokus pada pengembangan bakat olahraga di kalangan pemuda Kalurahan Pondokrejo. Kami menyelenggarakan berbagai kegiatan olahraga rutin, turnamen antar RT, dan pelatihan untuk meningkatkan kualitas atlet lokal. Olahraga yang kami kembangkan antara lain sepak bola, voli, bulu tangkis, dan atletik.",
-    contact: "Ahmad Fauzi",
-    phone: "0813-4567-8901",
-    email: "olahraga@pondokrejo.desa.id",
-    address: "Lapangan Olahraga Kalurahan Pondokrejo",
-    members: 32,
-    logo: null,
-    isActive: true,
-    established: "2019-07-20"
-  }
-};
-
-const communityMembers = {
-  "umkm-pondokrejo": [
-    { id: "1", name: "Budi Santoso", position: "Ketua", email: "budi@umkm.com", phone: "0812-3456-7890", joinDate: "2020-03-15" },
-    { id: "2", name: "Siti Aminah", position: "Sekretaris", email: "siti@umkm.com", phone: "0812-3456-7891", joinDate: "2020-03-15" },
-    { id: "3", name: "Ahmad Dahlan", position: "Bendahara", email: "ahmad@umkm.com", phone: "0812-3456-7892", joinDate: "2020-04-01" },
-    { id: "4", name: "Dewi Lestari", position: "Anggota", email: "dewi@umkm.com", phone: "0812-3456-7893", joinDate: "2020-05-15" },
-    { id: "5", name: "Eko Prasetyo", position: "Anggota", email: "eko@umkm.com", phone: "0812-3456-7894", joinDate: "2020-06-20" }
-  ],
-  "pemuda-olahraga": [
-    { id: "1", name: "Ahmad Fauzi", position: "Ketua", email: "ahmad@olahraga.com", phone: "0813-4567-8901", joinDate: "2019-07-20" },
-    { id: "2", name: "Budi Santoso", position: "Wakil Ketua", email: "budi@olahraga.com", phone: "0813-4567-8902", joinDate: "2019-07-20" },
-    { id: "3", name: "Citra Dewi", position: "Sekretaris", email: "citra@olahraga.com", phone: "0813-4567-8903", joinDate: "2019-08-01" },
-    { id: "4", name: "Dedi Kurniawan", position: "Bendahara", email: "dedi@olahraga.com", phone: "0813-4567-8904", joinDate: "2019-08-15" }
-  ]
-};
-
-const communityActivities = {
-  "umkm-pondokrejo": [
-    {
-      id: "1",
-      title: "Festival UMKM Pondokrejo 2024",
-      description: "Pameran dan penjualan produk UMKM unggulan Kalurahan Pondokrejo",
-      date: "2024-02-15",
-      time: "09:00",
-      location: "Balai Kalurahan",
-      status: "upcoming"
-    },
-    {
-      id: "2",
-      title: "Pelatihan Digital Marketing",
-      description: "Pelatihan pemasaran online untuk UMKM",
-      date: "2024-01-20",
-      time: "13:00",
-      location: "Ranggon Kalurahan",
-      status: "completed"
-    },
-    {
-      id: "3",
-      title: "Workshop Kemasan Produk",
-      description: "Desain kemasan yang menarik untuk produk UMKM",
-      date: "2024-03-10",
-      time: "09:00",
-      location: "Balai Kalurahan",
-      status: "upcoming"
-    }
-  ],
-  "pemuda-olahraga": [
-    {
-      id: "1",
-      title: "Turnamen Bola Voli Antar RT",
-      description: "Turnamen bola voli antar RT se-Kalurahan Pondokrejo",
-      date: "2024-02-20",
-      time: "16:00",
-      location: "Lapangan Desa",
-      status: "upcoming"
-    },
-    {
-      id: "2",
-      title: "Latihan Rutin Sepak Bola",
-      description: "Latihan sepak bola setiap minggu",
-      date: "2024-01-15",
-      time: "16:00",
-      location: "Lapangan Desa",
-      status: "completed"
-    },
-    {
-      id: "3",
-      title: "Lari Pagi Bersama",
-      description: "Olahraga lari pagi untuk kesehatan",
-      date: "2024-02-25",
-      time: "06:00",
-      location: "Alun-alun Desa",
-      status: "upcoming"
-    }
-  ]
-};
-
-const categoryColors = {
-  UMKM: "bg-blue-100 text-blue-800",
-  OLAHRAGA: "bg-green-100 text-green-800",
-  SENI: "bg-purple-100 text-purple-800",
-  LINGKUNGAN: "bg-emerald-100 text-emerald-800",
-  INTERNET_MARKETING: "bg-indigo-100 text-indigo-800",
-  TTG: "bg-orange-100 text-orange-800",
+const categoryColors: Record<string, string> = {
+  PERTANIAN: "bg-green-100 text-green-800",
+  EKONOMI: "bg-blue-100 text-blue-800",
+  DIGITAL: "bg-indigo-100 text-indigo-800",
+  OLAHRAGA: "bg-emerald-100 text-emerald-800",
+  KESEHATAN: "bg-red-100 text-red-800",
   RELIGI: "bg-yellow-100 text-yellow-800",
-  PEMUDA: "bg-red-100 text-red-800",
-  WANITA: "bg-pink-100 text-pink-800",
-  PENDIDIKAN: "bg-cyan-100 text-cyan-800",
-  KESEHATAN: "bg-teal-100 text-teal-800",
+  SOSIAL: "bg-orange-100 text-orange-800",
+  BUDAYA: "bg-purple-100 text-purple-800",
+  KELUARGA: "bg-pink-100 text-pink-800",
+  PEMUDA: "bg-cyan-100 text-cyan-800",
+  PENDIDIKAN: "bg-teal-100 text-teal-800",
+  INOVASI: "bg-violet-100 text-violet-800",
+  LINGKUNGAN: "bg-lime-100 text-lime-800",
   LAINNYA: "bg-gray-100 text-gray-800"
 };
 
@@ -141,16 +31,23 @@ interface CommunityDetailPageProps {
   };
 }
 
-export default function CommunityDetailPage({ params }: CommunityDetailPageProps) {
-  const community = communities[params.slug as keyof typeof communities];
-  const members = communityMembers[params.slug as keyof typeof communityMembers] || [];
-  const activities = communityActivities[params.slug as keyof typeof communityActivities] || [];
+export default async function CommunityDetailPage({ params }: CommunityDetailPageProps) {
+  const slug = params.slug as string;
+  
+  const community = await db.community.findUnique({
+    where: { slug },
+    include: {
+      members: true,
+      activities: true,
+    },
+  });
 
   if (!community) {
     notFound();
   }
 
-  return (
+  const members = community.members || [];
+  const activities = community.activities || [];
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Section */}
@@ -176,11 +73,11 @@ export default function CommunityDetailPage({ params }: CommunityDetailPageProps
               <div className="flex flex-wrap gap-4 text-sm">
                 <div className="flex items-center">
                   <Users className="h-4 w-4 mr-2" />
-                  {community.members} anggota aktif
+                  {members.length} anggota aktif
                 </div>
                 <div className="flex items-center">
                   <CalendarDays className="h-4 w-4 mr-2" />
-                  Berdiri sejak {new Date(community.established).toLocaleDateString('id-ID', { year: 'numeric', month: 'long' })}
+                  Bergabung sejak {new Date(community.createdAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'long' })}
                 </div>
               </div>
             </div>
@@ -213,7 +110,7 @@ export default function CommunityDetailPage({ params }: CommunityDetailPageProps
                   </CardHeader>
                   <CardContent>
                     <p className="text-muted-foreground leading-relaxed">
-                      {community.fullDescription}
+                      {community.description}
                     </p>
                   </CardContent>
                 </Card>
@@ -230,8 +127,8 @@ export default function CommunityDetailPage({ params }: CommunityDetailPageProps
                             <CardTitle className="text-lg">{activity.title}</CardTitle>
                             <CardDescription>{activity.description}</CardDescription>
                           </div>
-                          <Badge variant={activity.status === 'upcoming' ? 'default' : 'secondary'}>
-                            {activity.status === 'upcoming' ? 'Akan Datang' : 'Selesai'}
+                          <Badge variant={activity.startDate > new Date() ? 'default' : 'secondary'}>
+                            {activity.startDate > new Date() ? 'Akan Datang' : 'Selesai'}
                           </Badge>
                         </div>
                       </CardHeader>
@@ -239,17 +136,19 @@ export default function CommunityDetailPage({ params }: CommunityDetailPageProps
                         <div className="space-y-2 text-sm text-muted-foreground">
                           <div className="flex items-center">
                             <CalendarDays className="h-4 w-4 mr-2" />
-                            {new Date(activity.date).toLocaleDateString('id-ID', { 
+                            {new Date(activity.startDate).toLocaleDateString('id-ID', { 
                               weekday: 'long', 
                               year: 'numeric', 
                               month: 'long', 
                               day: 'numeric' 
-                            })} pukul {activity.time}
+                            })}
                           </div>
-                          <div className="flex items-center">
-                            <MapPin className="h-4 w-4 mr-2" />
-                            {activity.location}
-                          </div>
+                          {activity.location && (
+                            <div className="flex items-center">
+                              <MapPin className="h-4 w-4 mr-2" />
+                              {activity.location}
+                            </div>
+                          )}
                         </div>
                       </CardContent>
                     </Card>

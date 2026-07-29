@@ -41,12 +41,19 @@ const categoryColors: Record<string, string> = {
 };
 
 export default async function CommunitiesPage() {
-  const communities = await db.community.findMany({
+  let communities = await db.community.findMany({
     where: { isActive: true },
     orderBy: { name: 'asc' },
     include: {
       members: true,
     },
+  });
+
+  // Sort: Karang Taruna Pondokrejo always first
+  communities = communities.sort((a, b) => {
+    if (a.slug === 'karang-taruna-pondokrejo') return -1;
+    if (b.slug === 'karang-taruna-pondokrejo') return 1;
+    return 0;
   });
 
   return (

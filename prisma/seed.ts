@@ -479,6 +479,31 @@ async function main() {
   
   console.log(`\n${news.length} news seeded successfully!`);
   
+  // Seed gallery with news images
+  console.log('\nSeeding gallery from news images...');
+  const imageUrls = news
+    .filter(n => n.image)
+    .map(n => ({
+      title: n.title,
+      fileUrl: n.image,
+      fileType: 'image/jpeg',
+    }));
+  
+  for (const galleryItem of imageUrls) {
+    await prisma.gallery.upsert({
+      where: { id: galleryItem.fileUrl },
+      update: galleryItem,
+      create: {
+        ...galleryItem,
+        id: galleryItem.fileUrl,
+        description: '',
+      },
+    });
+    console.log(`  Seeded gallery: ${galleryItem.title}`);
+  }
+  
+  console.log(`\n${imageUrls.length} gallery items seeded from news!`);
+  
   console.log('Seeding communities...');
   
   for (const community of communities) {

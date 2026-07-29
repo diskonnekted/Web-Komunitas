@@ -1,14 +1,14 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Search, Filter, Calendar, User, Eye, Share2, Clock } from "lucide-react";
+import { Search, Filter, Calendar, User, Eye, Share2 } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
-import { db } from "@/lib/db";
-import { useState } from "react";
 
 const categories = [
   { value: "ALL", label: "Semua Kategori" },
@@ -35,31 +35,36 @@ interface NewsItem {
   excerpt: string | null;
   image: string | null;
   author: string;
-  publishedAt: Date;
+  publishedAt: string;
   views: number;
   category: string;
 }
 
-export default async function NewsPage() {
-  const newsItems = await db.news.findMany({
-    where: { isPublished: true },
-    orderBy: { publishedAt: 'desc' },
-  });
-
+export default function NewsPage() {
+  const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [sortBy, setSortBy] = useState("date");
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
 
+  useEffect(() => {
+    fetch("/api/news")
+      .then(res => res.json())
+      .then(data => setNewsItems(data))
+      .catch(console.error)
+      .finally(() => setIsLoading(false));
+  }, []);
+
   const filteredNews = newsItems
-    .filter((news: NewsItem) => {
+    .filter(news => {
       const matchesSearch = news.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            news.excerpt?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            news.content.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = selectedCategory === "ALL" || news.category === selectedCategory;
       return matchesSearch && matchesCategory;
     })
-    .sort((a: NewsItem, b: NewsItem) => {
+    .sort((a, b) => {
       switch (sortBy) {
         case "date":
           return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
@@ -71,6 +76,17 @@ export default async function NewsPage() {
           return 0;
       }
     });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -135,7 +151,7 @@ export default async function NewsPage() {
 
         {/* News Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredNews.map((news: NewsItem) => (
+          {filteredNews.map((news) => (
             <Dialog key={news.id}>
               <DialogTrigger asChild>
                 <div className="cursor-pointer" onClick={() => setSelectedNews(news)}>

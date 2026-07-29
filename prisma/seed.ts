@@ -2,6 +2,45 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+const news = [
+  {
+    title: "Pembinaan PIK-R di Padukuhan Watupecah Pondokrejo",
+    slug: "pembinaan-pik-r-padukuhan-watupecah-pondokrejo",
+    content: "Hari Minggu, 14 Juli 2024 pukul 19.30 WIB - selesai, di Padukuhan Watupecah, Pondokrejo, Kalurahan Pondokrejo bersama PIK-R Kapanewon Tempel melakukan Pembinaan PIK-R.\n\nPembinaan PIK-R di Padukuhan Watupecah ini bertempat di Kediaman Bapak Dukuh Padukuhan Watupecah yang dihadiri 35 peserta.\n\nPIK-R adalah singkatan dari Pusat Informasi Konseling Remaja dan menjadi suatu wadah kegiatan program PKBR (Penyiapan Kehidupan Berkeluarga Bagi Remaja) yang dikelola dari, oleh dan untuk remaja guna memberikan pelayanan informasi dan konseling kesehatan reproduksi serta penyiapan kehidupan berkeluarga.\n\nManfaat PIK-R:\n- Tempat untuk mencari solusi permasalahan yang dihadapi\n- Merencanakan masa depan\n- Memperoleh pengetahuan tentang hidup sehat bagi kalangan anak usia remaja\n\nTujuan PIK-R:\n- Meningkatnya kemampuan PIK Remaja dalam mengembangkan materi dan isi pesan Program GenRe\n- Meningkatnya kemampuan PIK Remaja dalam mengembangkan kegiatan yang lebih inovatif dan kreatif\n- Meningkatnya minat remaja untuk aktif dalam kegiatan dan pengelolaan PIK Remaja\n\nDengan adanya kegiatan ini diharapkan PIK-R yang ada di Kalurahan Pondokrejo menjadi lebih inovatif dan kreatif serta bisa menjadi contoh bagi remaja-remaja yang lainnya dan bisa mengurangi kenakalan remaja serta meningkatkan kesehatan remaja di Kalurahan Pondokrejo.",
+    excerpt: "Kegiatan pembinaan PIK-R di Padukuhan Watupecah dihadiri 35 peserta. PIK-R sebagai wadah program PKBR untuk remaja dalam pelayanan informasi dan konseling kesehatan reproduksi.",
+    image: "/news/pembinaan-pik-r-watupecah.jpeg",
+    author: "Admin",
+    category: "kegiatan",
+    views: 0,
+    isPublished: true,
+    publishedAt: new Date("2024-07-14T19:30:00Z"),
+  },
+  {
+    title: "Pembinaan PIK-R di Padukuhan Dukuh Pondokrejo",
+    slug: "pembinaan-pik-r-padukuhan-dukuh-pondokrejo",
+    content: "Hari Jumat, 12 Juli 2024 pukul 19.30 WIB - selesai, di Padukuhan Dukuh, Pondokrejo. Kalurahan Pondokrejo bersama PIK-R Kapanewon Tempel melakukan Pembinaan PIK-R.\n\nPembinaan PIK-R di Padukuhan Dukuh ini bertempat di Kediaman Bapak Dukuh Padukuhan Dukuh yang dihadiri 40 peserta.\n\nPIK-R adalah singkatan dari Pusat Informasi Konseling Remaja dan menjadi suatu wadah kegiatan program PKBR (Penyiapan Kehidupan Berkeluarga Bagi Remaja) yang dikelola dari, oleh dan untuk remaja guna memberikan pelayanan informasi dan konseling kesehatan reproduksi serta penyiapan kehidupan berkeluarga.\n\nManfaat PIK-R:\n- Tempat untuk mencari solusi permasalahan yang dihadapi\n- Merencanakan masa depan\n- Memperoleh pengetahuan tentang hidup sehat bagi kalangan anak usia remaja\n\nTujuan PIK-R:\n- Meningkatnya kemampuan PIK Remaja dalam mengembangkan materi dan isi pesan Program GenRe\n- Meningkatnya kemampuan PIK Remaja dalam mengembangkan kegiatan yang lebih inovatif dan kreatif\n- Meningkatnya minat remaja untuk aktif dalam kegiatan dan pengelolaan PIK Remaja\n\nDengan adanya kegiatan ini diharapkan PIK-R yang ada di Kalurahan Pondokrejo menjadi lebih inovatif dan kreatif serta bisa menjadi contoh bagi remaja-remaja yang lainnya dan bisa mengurangi kenakalan remaja serta meningkatkan kesehatan-kesehatan remaja di Kalurahan Pondokrejo.",
+    excerpt: "Pembinaan PIK-R di Padukuhan Dukuh dihadiri 40 peserta. PIK-R sebagai wadah program PKBR untuk remaja dalam pelayanan informasi dan konseling kesehatan reproduksi.",
+    image: "/news/pembinaan-pik-r-pondokrejo-2.jpeg",
+    author: "Admin",
+    category: "kegiatan",
+    views: 0,
+    isPublished: true,
+    publishedAt: new Date("2024-07-12T19:30:00Z"),
+  },
+  {
+    title: "Rapat Koordinasi Karang Taruna Pondokrejo Persiapan Porkal Tahun 2025",
+    slug: "rapat-koordinasi-karang-taruna-pondokrejo-persiapan-porkal-tahun-2025",
+    content: "Kalurahan Pondokrejo Kamis, 19 Juni 2025 di Kalurahan Pondokrejo mengadakan koordinasi Karang Taruna untuk persiapan Porkal tahun 2025. Pada acara ini dihadiri oleh Lurah Kalurahan Pondokrejo, Kamitua, Ketua Karang Taruna beserta anggotanya. Dalam pertemuan ini membahas struktur kepengurusan Porkal dan membahas jenis lomba pada Porkal tahun ini.",
+    excerpt: "Koordinasi Karang Taruna Pondokrejo dalam persiapan Pekan Olahraga Kalurahan (Porkal) tahun 2025.",
+    image: "/karangtaruna1.jpg",
+    author: "Admin",
+    category: "pengumuman",
+    views: 0,
+    isPublished: true,
+    publishedAt: new Date("2025-06-24T00:00:00Z"),
+  },
+];
+
 const communities = [
   // 1. Komunitas Pertanian & Lingkungan
   {
@@ -403,6 +442,19 @@ const communities = [
 ];
 
 async function main() {
+  console.log('Seeding news...');
+  
+  for (const newArticle of news) {
+    await prisma.news.upsert({
+      where: { slug: newArticle.slug },
+      update: newArticle,
+      create: newArticle,
+    });
+    console.log(`  Seeded: ${newArticle.title}`);
+  }
+  
+  console.log(`\n${news.length} news seeded successfully!`);
+  
   console.log('Seeding communities...');
   
   for (const community of communities) {

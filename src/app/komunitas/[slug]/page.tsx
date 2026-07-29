@@ -34,13 +34,19 @@ interface CommunityDetailPageProps {
 export default async function CommunityDetailPage({ params }: CommunityDetailPageProps) {
   const { slug } = await params;
   
-  const community = await db.community.findUnique({
-    where: { slug },
-    include: {
-      members: true,
-      activities: true,
-    },
-  });
+  let community;
+  try {
+    community = await db.community.findUnique({
+      where: { slug },
+      include: {
+        members: true,
+        activities: true,
+      },
+    });
+  } catch (error) {
+    console.error('Database error:', error);
+    throw error;
+  }
 
   if (!community) {
     notFound();

@@ -1,167 +1,59 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar } from "@/components/ui/calendar";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CalendarDays, MapPin, Clock, Filter, Search, Users } from "lucide-react";
+import { CalendarDays, MapPin, Clock, Filter, Search } from "lucide-react";
 
-// Mock data for development
-const activities = [
-  {
-    id: "1",
-    title: "Festival UMKM Pondokrejo",
-    description: "Pameran dan penjualan produk UMKM unggulan Kalurahan Pondokrejo",
-    date: "2024-02-15",
-    time: "09:00",
-    endDate: "2024-02-15",
-    endTime: "17:00",
-    location: "Balai Kalurahan",
-    community: "UMKM Pondokrejo",
-    category: "UMKM",
-    status: "upcoming",
-    latitude: -7.7956,
-    longitude: 110.3695
-  },
-  {
-    id: "2",
-    title: "Turnamen Bola Voli Antar RT",
-    description: "Turnamen bola voli antar RT se-Kalurahan Pondokrejo",
-    date: "2024-02-20",
-    time: "16:00",
-    endDate: "2024-02-20",
-    endTime: "20:00",
-    location: "Lapangan Desa",
-    community: "Pemuda Olahraga",
-    category: "OLAHRAGA",
-    status: "upcoming",
-    latitude: -7.7956,
-    longitude: 110.3695
-  },
-  {
-    id: "3",
-    title: "Pembersihan Sungai Code",
-    description: "Aksi bersih-bersih sungai dan penanaman pohon di bantaran sungai",
-    date: "2024-02-25",
-    time: "07:00",
-    endDate: "2024-02-25",
-    endTime: "11:00",
-    location: "Sungai Code",
-    community: "Lingkungan Hijau",
-    category: "LINGKUNGAN",
-    status: "upcoming",
-    latitude: -7.7956,
-    longitude: 110.3695
-  },
-  {
-    id: "4",
-    title: "Pelatihan Digital Marketing",
-    description: "Pelatihan pemasaran online untuk UMKM",
-    date: "2024-01-20",
-    time: "13:00",
-    endDate: "2024-01-20",
-    endTime: "16:00",
-    location: "Ranggon Kalurahan",
-    community: "UMKM Pondokrejo",
-    category: "UMKM",
-    status: "completed",
-    latitude: -7.7956,
-    longitude: 110.3695
-  },
-  {
-    id: "5",
-    title: "Pertunjukan Seni Tradisional",
-    description: "Pertunjukan seni tradisional Jawa dan kesenian lokal",
-    date: "2024-03-01",
-    time: "19:00",
-    endDate: "2024-03-01",
-    endTime: "22:00",
-    location: "Balai Kalurahan",
-    community: "Seni Budaya",
-    category: "SENI",
-    status: "upcoming",
-    latitude: -7.7956,
-    longitude: 110.3695
-  },
-  {
-    id: "6",
-    title: "Workshop Teknologi Tepat Guna",
-    description: "Pelatihan penerapan teknologi tepat guna untuk pertanian",
-    date: "2024-03-05",
-    time: "09:00",
-    endDate: "2024-03-05",
-    endTime: "15:00",
-    location: "Balai Kalurahan",
-    community: "Teknologi Tepat Guna",
-    category: "TTG",
-    status: "upcoming",
-    latitude: -7.7956,
-    longitude: 110.3695
-  }
-];
-
-const categories = [
-  { value: "ALL", label: "Semua Kategori" },
-  { value: "UMKM", label: "UMKM" },
-  { value: "OLAHRAGA", label: "Olahraga" },
-  { value: "SENI", label: "Seni Budaya" },
-  { value: "LINGKUNGAN", label: "Lingkungan" },
-  { value: "INTERNET_MARKETING", label: "Internet Marketing" },
-  { value: "TTG", label: "Teknologi Tepat Guna" },
-  { value: "RELIGI", label: "Keagamaan" },
-  { value: "PEMUDA", label: "Pemuda" },
-  { value: "WANITA", label: "Perempuan" },
-  { value: "PENDIDIKAN", label: "Pendidikan" },
-  { value: "KESEHATAN", label: "Kesehatan" },
-  { value: "LAINNYA", label: "Lainnya" }
-];
-
-const categoryColors = {
-  UMKM: "bg-blue-100 text-blue-800",
-  OLAHRAGA: "bg-green-100 text-green-800",
-  SENI: "bg-purple-100 text-purple-800",
-  LINGKUNGAN: "bg-emerald-100 text-emerald-800",
-  INTERNET_MARKETING: "bg-indigo-100 text-indigo-800",
-  TTG: "bg-orange-100 text-orange-800",
-  RELIGI: "bg-yellow-100 text-yellow-800",
-  PEMUDA: "bg-red-100 text-red-800",
-  WANITA: "bg-pink-100 text-pink-800",
-  PENDIDIKAN: "bg-cyan-100 text-cyan-800",
-  KESEHATAN: "bg-teal-100 text-teal-800",
-  LAINNYA: "bg-gray-100 text-gray-800"
-};
+interface Activity {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  location: string | null;
+  community: { name: string };
+  category: string;
+  isActive: boolean;
+}
 
 export default function ActivitiesPage() {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
-  const [viewMode, setViewMode] = useState("list");
 
-  const filteredActivities = activities.filter(activity => {
-    const matchesSearch = activity.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         activity.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         activity.community.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === "ALL" || activity.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  useEffect(() => {
+    fetch("/api/activities")
+      .then(res => res.json())
+      .then(data => setActivities(data))
+      .catch(console.error)
+      .finally(() => setIsLoading(false));
+  }, []);
 
-  const upcomingActivities = filteredActivities.filter(activity => activity.status === "upcoming");
-  const completedActivities = filteredActivities.filter(activity => activity.status === "completed");
+  const filteredActivities = activities
+    .filter(activity => {
+      const matchesSearch = activity.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           activity.description.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCategory = selectedCategory === "ALL" || activity.category === selectedCategory;
+      return matchesSearch && matchesCategory;
+    })
+    .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
 
-  const getActivitiesForDate = (date: Date) => {
-    return filteredActivities.filter(activity => {
-      const activityDate = new Date(activity.date);
-      return activityDate.toDateString() === date.toDateString();
-    });
-  };
-
-  const hasActivityForDate = (date: Date) => {
-    return getActivitiesForDate(date).length > 0;
-  };
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -170,13 +62,13 @@ export default function ActivitiesPage() {
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-4">Kegiatan Komunitas</h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Jadwal lengkap kegiatan dan event dari berbagai komunitas di Kalurahan Pondokrejo
+            Daftar kegiatan dan event dari seluruh komunitas Kalurahan Pondokrejo
           </p>
         </div>
 
         {/* Filters */}
         <div className="bg-card border rounded-lg p-6 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
@@ -189,33 +81,26 @@ export default function ActivitiesPage() {
             
             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
               <SelectTrigger>
-                <SelectValue placeholder="Pilih kategori" />
+                <SelectValue placeholder="Semua Kategori" />
               </SelectTrigger>
               <SelectContent>
-                {categories.map((category) => (
-                  <SelectItem key={category.value} value={category.value}>
-                    {category.label}
-                  </SelectItem>
-                ))}
+                <SelectItem value="ALL">Semua Kategori</SelectItem>
+                <SelectItem value="PERTANIAN">Pertanian</SelectItem>
+                <SelectItem value="EKONOMI">Ekonomi</SelectItem>
+                <SelectItem value="DIGITAL">Digital</SelectItem>
+                <SelectItem value="OLAHRAGA">Olahraga</SelectItem>
+                <SelectItem value="KESEHATAN">Kesehatan</SelectItem>
+                <SelectItem value="RELIGI">Religi</SelectItem>
+                <SelectItem value="SOSIAL">Sosial</SelectItem>
+                <SelectItem value="BUDAYA">Budaya</SelectItem>
+                <SelectItem value="KELUARGA">Keluarga</SelectItem>
+                <SelectItem value="PEMUDA">Pemuda</SelectItem>
+                <SelectItem value="PENDIDIKAN">Pendidikan</SelectItem>
+                <SelectItem value="INOVASI">Inovasi</SelectItem>
+                <SelectItem value="LINGKUNGAN">Lingkungan</SelectItem>
+                <SelectItem value="LAINNYA">Lainnya</SelectItem>
               </SelectContent>
             </Select>
-
-            <div className="flex gap-2">
-              <Button 
-                variant={viewMode === "list" ? "default" : "outline"}
-                onClick={() => setViewMode("list")}
-                className="flex-1"
-              >
-                Daftar
-              </Button>
-              <Button 
-                variant={viewMode === "calendar" ? "default" : "outline"}
-                onClick={() => setViewMode("calendar")}
-                className="flex-1"
-              >
-                Kalender
-              </Button>
-            </div>
           </div>
         </div>
 
@@ -224,229 +109,55 @@ export default function ActivitiesPage() {
           <p className="text-muted-foreground">
             Menampilkan {filteredActivities.length} kegiatan
           </p>
-          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-            <Filter className="h-4 w-4" />
-            <span>Filter aktif</span>
-          </div>
         </div>
 
-        {/* Content */}
-        {viewMode === "calendar" ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Calendar */}
-            <Card>
+        {/* Activities Grid */}
+        <div className="space-y-4">
+          {filteredActivities.map((activity) => (
+            <Card key={activity.id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
-                <CardTitle>Kalender Kegiatan</CardTitle>
-                <CardDescription>Klik pada tanggal untuk melihat kegiatan</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Calendar
-                  mode="single"
-                  selected={selectedDate}
-                  onSelect={setSelectedDate}
-                  className="rounded-md border"
-                  modifiers={{
-                    hasActivity: (date) => hasActivityForDate(date)
-                  }}
-                  modifiersStyles={{
-                    hasActivity: {
-                      backgroundColor: "#2E7D32",
-                      color: "white",
-                      fontWeight: "bold"
-                    }
-                  }}
-                />
-              </CardContent>
-            </Card>
-
-            {/* Activities for Selected Date */}
-            <Card>
-              <CardHeader>
-                <CardTitle>
-                  {selectedDate ? `Kegiatan pada ${selectedDate.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}` : 'Pilih Tanggal'}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {selectedDate ? (
-                  <div className="space-y-4">
-                    {getActivitiesForDate(selectedDate).map((activity) => (
-                      <Card key={activity.id} className="border-l-4 border-l-primary">
-                        <CardHeader className="pb-3">
-                          <div className="flex items-start justify-between">
-                            <div>
-                              <CardTitle className="text-lg">{activity.title}</CardTitle>
-                              <CardDescription className="text-sm">
-                                {activity.community}
-                              </CardDescription>
-                            </div>
-                            <Badge className={categoryColors[activity.category as keyof typeof categoryColors]}>
-                              {activity.category}
-                            </Badge>
-                          </div>
-                        </CardHeader>
-                        <CardContent>
-                          <p className="text-sm text-muted-foreground mb-3">
-                            {activity.description}
-                          </p>
-                          <div className="space-y-1 text-sm text-muted-foreground">
-                            <div className="flex items-center">
-                              <Clock className="h-4 w-4 mr-2" />
-                              {activity.time} - {activity.endTime}
-                            </div>
-                            <div className="flex items-center">
-                              <MapPin className="h-4 w-4 mr-2" />
-                              {activity.location}
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                    {getActivitiesForDate(selectedDate).length === 0 && (
-                      <p className="text-center text-muted-foreground py-8">
-                        Tidak ada kegiatan pada tanggal ini
-                      </p>
-                    )}
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <CardTitle className="text-lg mb-2">{activity.title}</CardTitle>
+                    <CardDescription>{activity.description}</CardDescription>
                   </div>
-                ) : (
-                  <p className="text-center text-muted-foreground py-8">
-                    Silakan pilih tanggal untuk melihat kegiatan
-                  </p>
-                )}
+                  <Badge variant={new Date(activity.startDate) > new Date() ? 'default' : 'secondary'}>
+                    {new Date(activity.startDate) > new Date() ? 'Akan Datang' : 'Selesai'}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <div className="flex items-center">
+                    <CalendarDays className="h-4 w-4 mr-2" />
+                    {new Date(activity.startDate).toLocaleDateString('id-ID', { 
+                      weekday: 'long', 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    })}
+                  </div>
+                  {activity.location && (
+                    <div className="flex items-center">
+                      <MapPin className="h-4 w-4 mr-2" />
+                      {activity.location}
+                    </div>
+                  )}
+                  <div className="flex items-center">
+                    <Clock className="h-4 w-4 mr-2" />
+                    {activity.community.name}
+                  </div>
+                </div>
               </CardContent>
             </Card>
-          </div>
-        ) : (
-          <Tabs defaultValue="upcoming" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="upcoming">Akan Datang ({upcomingActivities.length})</TabsTrigger>
-              <TabsTrigger value="completed">Selesai ({completedActivities.length})</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="upcoming" className="mt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {upcomingActivities.map((activity) => (
-                  <Card key={activity.id} className="hover:shadow-lg transition-shadow">
-                    <CardHeader>
-                      <div className="flex items-start justify-between mb-2">
-                        <CardTitle className="text-lg">{activity.title}</CardTitle>
-                        <Badge className={categoryColors[activity.category as keyof typeof categoryColors]}>
-                          {activity.category}
-                        </Badge>
-                      </div>
-                      <CardDescription className="text-sm">
-                        {activity.community}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground mb-4">
-                        {activity.description}
-                      </p>
-                      <div className="space-y-2 text-sm text-muted-foreground">
-                        <div className="flex items-center">
-                          <CalendarDays className="h-4 w-4 mr-2" />
-                          {new Date(activity.date).toLocaleDateString('id-ID', { 
-                            weekday: 'long', 
-                            year: 'numeric', 
-                            month: 'long', 
-                            day: 'numeric' 
-                          })}
-                        </div>
-                        <div className="flex items-center">
-                          <Clock className="h-4 w-4 mr-2" />
-                          {activity.time} - {activity.endTime}
-                        </div>
-                        <div className="flex items-center">
-                          <MapPin className="h-4 w-4 mr-2" />
-                          {activity.location}
-                        </div>
-                      </div>
-                      <div className="mt-4">
-                        <Badge variant="default" className="bg-green-100 text-green-800">
-                          Akan Datang
-                        </Badge>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-              
-              {upcomingActivities.length === 0 && (
-                <div className="text-center py-12">
-                  <CalendarDays className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-                  <h3 className="text-lg font-semibold mb-2">Tidak ada kegiatan yang akan datang</h3>
-                  <p className="text-muted-foreground">
-                    Tidak ada kegiatan terjadwal dalam waktu dekat.
-                  </p>
-                </div>
-              )}
-            </TabsContent>
-            
-            <TabsContent value="completed" className="mt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {completedActivities.map((activity) => (
-                  <Card key={activity.id} className="opacity-75">
-                    <CardHeader>
-                      <div className="flex items-start justify-between mb-2">
-                        <CardTitle className="text-lg">{activity.title}</CardTitle>
-                        <Badge className={categoryColors[activity.category as keyof typeof categoryColors]}>
-                          {activity.category}
-                        </Badge>
-                      </div>
-                      <CardDescription className="text-sm">
-                        {activity.community}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground mb-4">
-                        {activity.description}
-                      </p>
-                      <div className="space-y-2 text-sm text-muted-foreground">
-                        <div className="flex items-center">
-                          <CalendarDays className="h-4 w-4 mr-2" />
-                          {new Date(activity.date).toLocaleDateString('id-ID', { 
-                            weekday: 'long', 
-                            year: 'numeric', 
-                            month: 'long', 
-                            day: 'numeric' 
-                          })}
-                        </div>
-                        <div className="flex items-center">
-                          <Clock className="h-4 w-4 mr-2" />
-                          {activity.time} - {activity.endTime}
-                        </div>
-                        <div className="flex items-center">
-                          <MapPin className="h-4 w-4 mr-2" />
-                          {activity.location}
-                        </div>
-                      </div>
-                      <div className="mt-4">
-                        <Badge variant="secondary">
-                          Selesai
-                        </Badge>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-              
-              {completedActivities.length === 0 && (
-                <div className="text-center py-12">
-                  <CalendarDays className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-                  <h3 className="text-lg font-semibold mb-2">Belum ada kegiatan yang selesai</h3>
-                  <p className="text-muted-foreground">
-                    Kegiatan yang telah selesai akan ditampilkan di sini.
-                  </p>
-                </div>
-              )}
-            </TabsContent>
-          </Tabs>
-        )}
+          ))}
+        </div>
 
         {/* No Results */}
         {filteredActivities.length === 0 && (
           <div className="text-center py-12">
             <div className="text-muted-foreground mb-4">
-              <Filter className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />
             </div>
             <h3 className="text-lg font-semibold mb-2">Tidak ada kegiatan ditemukan</h3>
             <p className="text-muted-foreground mb-4">

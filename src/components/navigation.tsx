@@ -30,9 +30,7 @@ export default function Navigation() {
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center">
-                <span className="text-primary font-bold text-sm">KP</span>
-              </div>
+              <img src="/logo.webp" alt="Logo" className="w-10 h-10 rounded-full object-cover" />
               <span className="font-bold text-xl">Kalurahan Pondokrejo</span>
             </Link>
           </div>

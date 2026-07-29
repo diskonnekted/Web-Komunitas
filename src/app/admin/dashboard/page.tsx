@@ -313,8 +313,46 @@ export default function AdminDashboard() {
           </Card>
         </div>
 
+        {/* Quick Actions - Top Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Aksi Cepat</CardTitle>
+            <CardDescription>
+              Akses cepat ke fitur-fitur admin yang sering digunakan
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <Button asChild className="h-20 flex-col">
+                <Link href="/admin/communities">
+                  <Plus className="h-6 w-6 mb-2" />
+                  <span className="text-sm">Kelola Komunitas</span>
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="h-20 flex-col">
+                <Link href="/admin/activities">
+                  <Plus className="h-6 w-6 mb-2" />
+                  <span className="text-sm">Tambah Kegiatan</span>
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="h-20 flex-col">
+                <Link href="/admin/news">
+                  <Plus className="h-6 w-6 mb-2" />
+                  <span className="text-sm">Tambah Berita</span>
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="h-20 flex-col">
+                <Link href="/admin/gallery">
+                  <ImageIcon className="h-6 w-6 mb-2" />
+                  <span className="text-sm">Kelola Galeri</span>
+                </Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Main Tabs */}
-        <Tabs defaultValue="overview" className="space-y-6">
+        <Tabs defaultValue="overview" className="space-y-6 mt-6">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="overview">Ringkasan</TabsTrigger>
             <TabsTrigger value="communities">Komunitas</TabsTrigger>
@@ -357,44 +395,6 @@ export default function AdminDashboard() {
                       Tidak ada kegiatan akan datang
                     </div>
                   )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Quick Actions */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Aksi Cepat</CardTitle>
-                <CardDescription>
-                  Akses cepat ke fitur-fitur admin yang sering digunakan
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <Button asChild className="h-20 flex-col">
-                    <Link href="/admin/communities">
-                      <Plus className="h-6 w-6 mb-2" />
-                      <span className="text-sm">Kelola Komunitas</span>
-                    </Link>
-                  </Button>
-                  <Button asChild variant="outline" className="h-20 flex-col">
-                    <Link href="/admin/activities">
-                      <Plus className="h-6 w-6 mb-2" />
-                      <span className="text-sm">Tambah Kegiatan</span>
-                    </Link>
-                  </Button>
-                  <Button asChild variant="outline" className="h-20 flex-col">
-                    <Link href="/admin/news">
-                      <Plus className="h-6 w-6 mb-2" />
-                      <span className="text-sm">Tambah Berita</span>
-                    </Link>
-                  </Button>
-                  <Button asChild variant="outline" className="h-20 flex-col">
-                    <Link href="/admin/gallery">
-                      <ImageIcon className="h-6 w-6 mb-2" />
-                      <span className="text-sm">Kelola Galeri</span>
-                    </Link>
-                  </Button>
                 </div>
               </CardContent>
             </Card>

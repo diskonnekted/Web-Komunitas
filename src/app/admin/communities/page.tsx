@@ -61,6 +61,27 @@ export default function AdminCommunitiesPage() {
     }
   };
 
+  const handleDelete = async (id: string) => {
+    if (!confirm("Apakah Anda yakin ingin menghapus komunitas ini? Semua anggota dan kegiatan di dalamnya juga akan terhapus.")) {
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/communities/${id}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        fetchCommunities();
+      } else {
+        const errorData = await response.json();
+        alert(errorData.error || "Gagal menghapus komunitas.");
+      }
+    } catch (error) {
+      console.error("Error deleting community:", error);
+      alert("Terjadi kesalahan saat menghapus komunitas.");
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -122,7 +143,12 @@ export default function AdminCommunitiesPage() {
                           <Edit className="h-4 w-4 mr-1" />
                           Edit
                         </Button>
-                        <Button variant="outline" size="sm">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          className="text-destructive hover:bg-destructive/10"
+                          onClick={() => handleDelete(community.id)}
+                        >
                           <Trash2 className="h-4 w-4 mr-1" />
                           Hapus
                         </Button>

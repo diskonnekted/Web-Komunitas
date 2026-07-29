@@ -246,12 +246,12 @@ const communities = [
   
   // 5. Komunitas Keagamaan & Sosial
   {
-    name: "Taman Terasa Ngaji (TTG)",
-    slug: "taman-terasa-ngaji",
-    category: "RELIGI",
-    description: "Pengajian rutin untuk anak-anak & remaja dengan metode yang menyenangkan dan interaktif.",
-    contact: "Ustad Ahmad",
-    phone: "0831-2345-6789",
+    name: "Teknologi Tepat Guna",
+    slug: "teknologi-tepat-guna",
+    category: "INOVASI",
+    description: "Pengembangan dan penerapan teknologi tepat guna untuk kesejahteraan warga Kalurahan Pondokrejo.",
+    contact: "Koordinator TTG",
+    phone: "0812-3456-7890",
     email: "ttg@pondokrejo.desa.id",
     address: "Balai Kalurahan Pondokrejo"
   },

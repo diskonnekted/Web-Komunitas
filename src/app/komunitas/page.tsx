@@ -1,9 +1,21 @@
-import { db } from "@/lib/db";
+"use client";
+
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Users } from "lucide-react";
+import { Users, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import Link from "next/link";
+
+interface Community {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  category: string;
+  members: { id: string }[];
+}
 
 const categories = [
   { value: "ALL", label: "Semua Kategori" },
@@ -40,21 +52,48 @@ const categoryColors: Record<string, string> = {
   LAINNYA: "bg-gray-100 text-gray-800"
 };
 
-export default async function CommunitiesPage() {
-  let communities = await db.community.findMany({
-    where: { isActive: true },
-    orderBy: { name: 'asc' },
-    include: {
-      members: true,
-    },
+export default function CommunitiesPage() {
+  const [communities, setCommunities] = useState<Community[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("ALL");
+
+  useEffect(() => {
+    fetch("/api/communities-full")
+      .then(res => res.json())
+      .then((data: Community[]) => {
+        // Sort: Karang Taruna Pondokrejo always first
+        const sorted = data.sort((a, b) => {
+          if (a.slug === 'karang-taruna-pondokrejo') return -1;
+          if (b.slug === 'karang-taruna-pondokrejo') return 1;
+          return 0;
+        });
+        setCommunities(sorted);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        console.error("Failed to fetch communities:", err);
+        setIsLoading(false);
+      });
+  }, []);
+
+  const filteredCommunities = communities.filter(community => {
+    const matchesSearch = community.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         community.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === "ALL" || community.category === selectedCategory;
+    return matchesSearch && matchesCategory;
   });
 
-  // Sort: Karang Taruna Pondokrejo always first
-  communities = communities.sort((a, b) => {
-    if (a.slug === 'karang-taruna-pondokrejo') return -1;
-    if (b.slug === 'karang-taruna-pondokrejo') return 1;
-    return 0;
-  });
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -67,9 +106,34 @@ export default async function CommunitiesPage() {
           </p>
         </div>
 
+        {/* Filters */}
+        <div className="bg-card border rounded-lg p-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                placeholder="Cari komunitas..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
+            >
+              {categories.map((cat) => (
+                <option key={cat.value} value={cat.value}>{cat.label}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
         {/* Communities Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {communities.map((community) => (
+          {filteredCommunities.map((community) => (
             <Card key={community.id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="flex items-start justify-between mb-2">
@@ -103,12 +167,21 @@ export default async function CommunitiesPage() {
         </div>
 
         {/* No Results */}
-        {communities.length === 0 && (
+        {filteredCommunities.length === 0 && (
           <div className="text-center py-12">
-            <h3 className="text-lg font-semibold mb-2">Belum ada komunitas</h3>
+            <h3 className="text-lg font-semibold mb-2">Tidak ada komunitas ditemukan</h3>
             <p className="text-muted-foreground mb-4">
-              Komunitas akan segera ditambahkan.
+              Coba ubah filter pencarian Anda.
             </p>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setSearchTerm("");
+                setSelectedCategory("ALL");
+              }}
+            >
+              Reset Filter
+            </Button>
           </div>
         )}
 

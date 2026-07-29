@@ -39,6 +39,30 @@ const news = [
     isPublished: true,
     publishedAt: new Date("2025-06-24T00:00:00Z"),
   },
+  {
+    title: "Pembinaan PIK-R di Padukuhan Jlapan Pondokrejo",
+    slug: "pembinaan-pik-r-padukuhan-jlapan-pondokrejo",
+    content: "Hari Rabu, 10 Juli 2024 pukul 19.30 WIB - selesai, Kalurahan Pondokrejo bersama PIK-R Kapanewon Tempel melakukan Pembinaan PIK-R.\n\nPembinaan PIK-R di Padukuhan Jlapan ini bertempat di Pendopo RW 12 Padukuhan Jlapan yang dihadiri 70 peserta.\n\nPIK-R adalah singkatan dari Pusat Informasi Konseling Remaja dan menjadi suatu wadah kegiatan program PKBR (Penyiapan Kehidupan Berkeluarga Bagi Remaja) yang dikelola dari, oleh dan untuk remaja guna memberikan pelayanan informasi dan konseling kesehatan reproduksi serta penyiapan kehidupan berkeluarga.\n\nManfaat PIK-R:\n- Tempat untuk mencari solusi permasalahan yang dihadapi\n- Merencanakan masa depan\n- Memperoleh pengetahuan tentang hidup sehat bagi kalangan anak usia remaja\n\nTujuan PIK-R:\n- Meningkatnya kemampuan PIK Remaja dalam mengembangkan materi dan isi pesan Program GenRe\n- Meningkatnya kemampuan PIK Remaja dalam mengembangkan kegiatan yang lebih inovatif dan kreatif\n- Meningkatnya minat remaja untuk aktif dalam kegiatan dan pengelolaan PIK Remaja\n\nDengan adanya kegiatan ini diharapkan PIK-R yang ada di Kalurahan Pondokrejo menjadi lebih inovatif dan kreatif serta bisa menjadi contoh bagi remaja-remaja yang lainnya dan bisa mengurangi kenakalan remaja serta meningkatkan kesehatan-kesehatan remaja di Kalurahan Pondokrejo.",
+    excerpt: "Pembinaan PIK-R di Padukuhan Jlapan dihadiri 70 peserta. PIK-R sebagai wadah program PKBR untuk remaja dalam pelayanan informasi dan konseling kesehatan reproduksi.",
+    image: "/news/pembinaan-pik-r-jlapan.jpeg",
+    author: "Admin",
+    category: "kegiatan",
+    views: 0,
+    isPublished: true,
+    publishedAt: new Date("2024-07-10T19:30:00Z"),
+  },
+  {
+    title: "Pembinaan PIK-R di Padukuhan Karanglo Pondokrejo",
+    slug: "pembinaan-pik-r-padukuhan-karanglo-pondokrejo",
+    content: "Hari Jum'at, 05 Juli 2024 pukul 19.30 WIB - selesai, Kalurahan Pondokrejo bersama PIK-R Kapanewon Tempel melakukan Pembinaan PIK-R.\n\nPembinaan PIK-R di Padukuhan Karanglo bertempat di rumah ibu R. Sriwahyuni yang dihadiri 45 peserta dari usia remaja.\n\nPIK-R adalah singkatan dari Pusat Informasi Konseling Remaja dan menjadi suatu wadah kegiatan program PKBR (Penyiapan Kehidupan Berkeluarga Bagi Remaja) yang dikelola dari, oleh dan untuk remaja guna memberikan pelayanan informasi dan konseling kesehatan reproduksi serta penyiapan kehidupan berkeluarga.\n\nManfaat PIK-R:\n- Tempat untuk mencari solusi permasalahan yang dihadapi\n- Merencanakan masa depan\n- Memperoleh pengetahuan tentang hidup sehat bagi kalangan anak usia remaja\n\nTujuan PIK-R:\n- Meningkatnya kemampuan PIK Remaja dalam mengembangkan materi dan isi pesan Program GenRe\n- Meningkatnya kemampuan PIK Remaja dalam mengembangkan kegiatan yang lebih inovatif dan kreatif\n- Meningkatnya minat remaja untuk aktif dalam kegiatan dan pengelolaan PIK Remaja\n\nDengan adanya kegiatan ini diharapkan PIK-R yang ada di Kalurahan Pondokrejo menjadi lebih inovatif dan kreatif serta bisa menjadi contoh bagi remaja-remaja yang lainnya dan bisa mengurangi kenakalan remaja serta meningkatkan kesehatan-kesehatan remaja di Kalurahan Pondokrejo.",
+    excerpt: "Pembinaan PIK-R di Padukuhan Karanglo dihadiri 45 peserta remaja. PIK-R sebagai wadah program PKBR untuk remaja dalam pelayanan informasi dan konseling kesehatan reproduksi.",
+    image: "/news/pembinaan-pik-r-karanglo.jpeg",
+    author: "Admin",
+    category: "kegiatan",
+    views: 0,
+    isPublished: true,
+    publishedAt: new Date("2024-07-05T19:30:00Z"),
+  },
 ];
 
 const communities = [

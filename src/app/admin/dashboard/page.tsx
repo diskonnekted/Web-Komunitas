@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -260,21 +261,29 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <Button className="h-20 flex-col">
-                    <Plus className="h-6 w-6 mb-2" />
-                    <span className="text-sm">Tambah Komunitas</span>
+                  <Button asChild className="h-20 flex-col">
+                    <Link href="/admin/communities">
+                      <Plus className="h-6 w-6 mb-2" />
+                      <span className="text-sm">Kelola Komunitas</span>
+                    </Link>
                   </Button>
-                  <Button variant="outline" className="h-20 flex-col">
-                    <Plus className="h-6 w-6 mb-2" />
-                    <span className="text-sm">Tambah Kegiatan</span>
+                  <Button asChild variant="outline" className="h-20 flex-col">
+                    <Link href="/admin/activities">
+                      <Plus className="h-6 w-6 mb-2" />
+                      <span className="text-sm">Tambah Kegiatan</span>
+                    </Link>
                   </Button>
-                  <Button variant="outline" className="h-20 flex-col">
-                    <Plus className="h-6 w-6 mb-2" />
-                    <span className="text-sm">Tambah Berita</span>
+                  <Button asChild variant="outline" className="h-20 flex-col">
+                    <Link href="/admin/news">
+                      <Plus className="h-6 w-6 mb-2" />
+                      <span className="text-sm">Tambah Berita</span>
+                    </Link>
                   </Button>
-                  <Button variant="outline" className="h-20 flex-col">
-                    <ImageIcon className="h-6 w-6 mb-2" />
-                    <span className="text-sm">Upload Media</span>
+                  <Button asChild variant="outline" className="h-20 flex-col">
+                    <Link href="/admin/gallery">
+                      <ImageIcon className="h-6 w-6 mb-2" />
+                      <span className="text-sm">Kelola Galeri</span>
+                    </Link>
                   </Button>
                 </div>
               </CardContent>

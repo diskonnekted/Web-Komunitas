@@ -127,17 +127,6 @@ export default function AdminLoginPage() {
                 {isLoading ? "Memproses..." : "Login"}
               </Button>
             </form>
-
-            {/* Demo Credentials */}
-            <div className="mt-6 p-4 bg-muted rounded-lg">
-              <p className="text-sm font-medium mb-2">Demo Credentials:</p>
-              <p className="text-xs text-muted-foreground">
-                Username: <span className="font-mono">admin</span>
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Password: <span className="font-mono">admin123</span>
-              </p>
-            </div>
           </CardContent>
         </Card>
 

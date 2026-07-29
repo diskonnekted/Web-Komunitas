@@ -1,9 +1,30 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CalendarDays, MapPin, Users, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { db } from "@/lib/db";
+
+interface Community {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  category: string;
+  members: { id: string }[];
+}
+
+interface Activity {
+  id: string;
+  title: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  location: string | null;
+  community: { name: string };
+}
 
 const categoryColors: Record<string, string> = {
   PERTANIAN: "bg-green-100 text-green-800",
@@ -22,29 +43,51 @@ const categoryColors: Record<string, string> = {
   LAINNYA: "bg-gray-100 text-gray-800"
 };
 
-export default async function Home() {
-  const communities = await db.community.findMany({
-    where: { isActive: true },
-    orderBy: { createdAt: 'desc' },
-    include: {
-      members: true,
-    },
-    take: 8,
-  });
+export default function Home() {
+  const [communities, setCommunities] = useState<Community[]>([]);
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const activities = await db.activity.findMany({
-    where: { isActive: true, startDate: { gte: new Date() } },
-    orderBy: { startDate: 'asc' },
-    take: 3,
-    include: {
-      community: true,
-    },
-  });
+  useEffect(() => {
+    Promise.all([
+      fetch("/api/communities-full").then(res => res.json()),
+      fetch("/api/activities").then(res => res.json()),
+    ]).then(([commData, actData]) => {
+      // Sort communities: Karang Taruna first, then by name
+      const sortedCommunities = (commData as Community[]).sort((a, b) => {
+        if (a.slug === 'karang-taruna-pondokrejo') return -1;
+        if (b.slug === 'karang-taruna-pondokrejo') return 1;
+        return a.name.localeCompare(b.name);
+      });
+
+      // Filter upcoming activities
+      const now = new Date();
+      const upcomingActivities = (actData as Activity[]).filter(a => new Date(a.startDate) >= now).sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+
+      setCommunities(sortedCommunities.slice(0, 8));
+      setActivities(upcomingActivities.slice(0, 3));
+      setIsLoading(false);
+    }).catch(err => {
+      console.error("Failed to fetch data:", err);
+      setIsLoading(false);
+    });
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-16">
       {/* Hero Section */}
-      <section 
+      <section
         className="relative text-primary-foreground py-32"
         style={{
           backgroundImage: 'url(/hero.jpg)',
@@ -87,7 +130,7 @@ export default async function Home() {
             Temukan komunitas yang sesuai dengan minat dan bakat Anda
           </p>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {communities.map((community) => (
             <Card key={community.id} className="hover:shadow-lg transition-shadow">
@@ -118,7 +161,7 @@ export default async function Home() {
             </Card>
           ))}
         </div>
-        
+
         <div className="text-center mt-8">
           <Button asChild variant="outline">
             <Link href="/komunitas">
@@ -138,7 +181,7 @@ export default async function Home() {
               Jangan lewatkan kegiatan-kegiatan menarik dari komunitas kami
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {activities.map((activity) => (
               <Card key={activity.id} className="hover:shadow-lg transition-shadow">
@@ -155,11 +198,11 @@ export default async function Home() {
                   <div className="space-y-2 text-sm text-muted-foreground">
                     <div className="flex items-center">
                       <CalendarDays className="h-4 w-4 mr-2" />
-                      {new Date(activity.startDate).toLocaleDateString('id-ID', { 
-                        weekday: 'long', 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
+                      {new Date(activity.startDate).toLocaleDateString('id-ID', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
                       })}
                     </div>
                     {activity.location && (
@@ -173,13 +216,13 @@ export default async function Home() {
               </Card>
             ))}
           </div>
-          
+
           {activities.length === 0 && (
             <div className="text-center py-8 text-muted-foreground">
               Belum ada kegiatan mendatang.
             </div>
           )}
-          
+
           <div className="text-center mt-8">
             <Button asChild>
               <Link href="/kegiatan">

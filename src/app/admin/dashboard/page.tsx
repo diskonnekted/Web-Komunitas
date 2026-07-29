@@ -398,6 +398,55 @@ export default function AdminDashboard() {
                 </div>
               </CardContent>
             </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Berita Terkini</CardTitle>
+                <CardDescription>
+                  Berita dan pengumuman terbaru
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {newsItems
+                    .filter((n) => n.isPublished)
+                    .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+                    .slice(0, 5)
+                    .map((news) => (
+                      <div key={news.id} className="flex items-start justify-between p-4 border rounded-lg">
+                        <div className="flex-1">
+                          <h4 className="font-medium">{news.title}</h4>
+                          <div className="flex items-center space-x-2 mt-1">
+                            <Badge variant="outline" className="text-xs">{news.category}</Badge>
+                            <span className="text-xs text-muted-foreground">
+                              {new Date(news.publishedAt).toLocaleDateString('id-ID', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                              })}
+                            </span>
+                            <span className="text-xs text-muted-foreground">• {news.author}</span>
+                          </div>
+                          {news.excerpt && (
+                            <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{news.excerpt}</p>
+                          )}
+                        </div>
+                        <Button variant="outline" size="sm" asChild>
+                          <Link href={`/berita`}>
+                            <Eye className="h-4 w-4 mr-1" />
+                            Lihat
+                          </Link>
+                        </Button>
+                      </div>
+                    ))}
+                  {newsItems.filter((n) => n.isPublished).length === 0 && (
+                    <div className="text-center py-8 text-muted-foreground">
+                      Belum ada berita
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* Communities Tab */}

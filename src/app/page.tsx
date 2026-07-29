@@ -3,125 +3,44 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { CalendarDays, MapPin, Users, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { db } from "@/lib/db";
 
-// Mock data for development
-const popularCommunities = [
-  {
-    id: "1",
-    name: "UMKM Pondokrejo",
-    category: "UMKM",
-    description: "Wadah bagi pelaku usaha mikro kecil menengah untuk berkembang bersama",
-    members: 45,
-    slug: "umkm-pondokrejo"
-  },
-  {
-    id: "2",
-    name: "Gapoktan Pondokrejo",
-    category: "PERTANIAN",
-    description: "Gabungan Kelompok Tani untuk petani padi, sayur, dan tanaman hias",
-    members: 38,
-    slug: "gapoktan-pondokrejo"
-  },
-  {
-    id: "3",
-    name: "Pemuda Olahraga",
-    category: "OLAHRAGA",
-    description: "Mengembangkan bakat olahraga pemuda Kalurahan Pondokrejo",
-    members: 32,
-    slug: "pemuda-olahraga"
-  },
-  {
-    id: "4",
-    name: "Seni Budaya",
-    category: "SENI",
-    description: "Melestarikan seni dan budaya tradisional Kalurahan Pondokrejo",
-    members: 28,
-    slug: "seni-budaya"
-  },
-  {
-    id: "5",
-    name: "Lingkungan Hijau",
-    category: "LINGKUNGAN",
-    description: "Komunitas peduli lingkungan dan penghijauan desa",
-    members: 38,
-    slug: "lingkungan-hijau"
-  },
-  {
-    id: "6",
-    name: "Internet Marketing Desa",
-    category: "DIGITAL",
-    description: "Pelatihan konten, SEO, dan media sosial untuk UMKM",
-    members: 25,
-    slug: "internet-marketing-desa"
-  },
-  {
-    id: "7",
-    name: "Karang Taruna Pondokrejo",
-    category: "PEMUDA",
-    description: "Organisasi kepemudaan sebagai penggerak kegiatan pemuda",
-    members: 42,
-    slug: "karang-taruna-pondokrejo"
-  },
-  {
-    id: "8",
-    name: "Taman Terasa Ngaji (TTG)",
-    category: "RELIGI",
-    description: "Pengajian rutin untuk anak-anak & remaja",
-    members: 35,
-    slug: "taman-terasa-ngaji"
-  }
-];
-
-const upcomingEvents = [
-  {
-    id: "1",
-    title: "Festival UMKM Pondokrejo",
-    date: "2024-02-15",
-    time: "09:00",
-    location: "Balai Kalurahan",
-    community: "UMKM Pondokrejo",
-    description: "Pameran dan penjualan produk UMKM unggulan Kalurahan Pondokrejo"
-  },
-  {
-    id: "2",
-    title: "Turnamen Bola Voli",
-    date: "2024-02-20",
-    time: "16:00",
-    location: "Lapangan Desa",
-    community: "Pemuda Olahraga",
-    description: "Turnamen bola voli antar RT se-Kalurahan Pondokrejo"
-  },
-  {
-    id: "3",
-    title: "Pembersihan Sungai",
-    date: "2024-02-25",
-    time: "07:00",
-    location: "Sungai Code",
-    community: "Lingkungan Hijau",
-    description: "Aksi bersih-bersih sungai dan penanaman pohon di bantaran sungai"
-  }
-];
-
-const categoryColors = {
-  UMKM: "bg-blue-100 text-blue-800",
+const categoryColors: Record<string, string> = {
   PERTANIAN: "bg-green-100 text-green-800",
-  OLAHRAGA: "bg-emerald-100 text-emerald-800",
-  SENI: "bg-purple-100 text-purple-800",
-  LINGKUNGAN: "bg-teal-100 text-teal-800",
+  EKONOMI: "bg-blue-100 text-blue-800",
   DIGITAL: "bg-indigo-100 text-indigo-800",
-  PEMUDA: "bg-red-100 text-red-800",
+  OLAHRAGA: "bg-emerald-100 text-emerald-800",
+  KESEHATAN: "bg-red-100 text-red-800",
   RELIGI: "bg-yellow-100 text-yellow-800",
-  KESEHATAN: "bg-pink-100 text-pink-800",
-  PENDIDIKAN: "bg-cyan-100 text-cyan-800",
-  EKONOMI: "bg-orange-100 text-orange-800",
-  SOSIAL: "bg-amber-100 text-amber-800",
-  BUDAYA: "bg-lime-100 text-lime-800",
-  KELUARGA: "bg-rose-100 text-rose-800",
+  SOSIAL: "bg-orange-100 text-orange-800",
+  BUDAYA: "bg-purple-100 text-purple-800",
+  KELUARGA: "bg-pink-100 text-pink-800",
+  PEMUDA: "bg-cyan-100 text-cyan-800",
+  PENDIDIKAN: "bg-teal-100 text-teal-800",
   INOVASI: "bg-violet-100 text-violet-800",
+  LINGKUNGAN: "bg-lime-100 text-lime-800",
   LAINNYA: "bg-gray-100 text-gray-800"
 };
 
-export default function Home() {
+export default async function Home() {
+  const communities = await db.community.findMany({
+    where: { isActive: true },
+    orderBy: { createdAt: 'desc' },
+    include: {
+      members: true,
+    },
+    take: 8,
+  });
+
+  const activities = await db.activity.findMany({
+    where: { isActive: true, startDate: { gte: new Date() } },
+    orderBy: { startDate: 'asc' },
+    take: 3,
+    include: {
+      community: true,
+    },
+  });
+
   return (
     <div className="space-y-16">
       {/* Hero Section */}
@@ -161,7 +80,7 @@ export default function Home() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {popularCommunities.map((community) => (
+          {communities.map((community) => (
             <Card key={community.id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="flex items-center justify-between mb-2">
@@ -170,7 +89,7 @@ export default function Home() {
                     {community.category}
                   </Badge>
                 </div>
-                <CardDescription className="text-sm">
+                <CardDescription className="text-sm line-clamp-2">
                   {community.description}
                 </CardDescription>
               </CardHeader>
@@ -178,7 +97,7 @@ export default function Home() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center text-sm text-muted-foreground">
                     <Users className="h-4 w-4 mr-1" />
-                    {community.members} anggota
+                    {community.members.length} anggota
                   </div>
                   <Button asChild variant="outline" size="sm">
                     <Link href={`/komunitas/${community.slug}`}>
@@ -212,37 +131,45 @@ export default function Home() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {upcomingEvents.map((event) => (
-              <Card key={event.id} className="hover:shadow-lg transition-shadow">
+            {activities.map((activity) => (
+              <Card key={activity.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex items-center justify-between mb-2">
-                    <CardTitle className="text-lg">{event.title}</CardTitle>
-                    <Badge variant="secondary">{event.community}</Badge>
+                    <CardTitle className="text-lg">{activity.title}</CardTitle>
+                    <Badge variant="secondary">{activity.community.name}</Badge>
                   </div>
                   <CardDescription className="text-sm">
-                    {event.description}
+                    {activity.description}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2 text-sm text-muted-foreground">
                     <div className="flex items-center">
                       <CalendarDays className="h-4 w-4 mr-2" />
-                      {new Date(event.date).toLocaleDateString('id-ID', { 
+                      {new Date(activity.startDate).toLocaleDateString('id-ID', { 
                         weekday: 'long', 
                         year: 'numeric', 
                         month: 'long', 
                         day: 'numeric' 
-                      })} pukul {event.time}
+                      })}
                     </div>
-                    <div className="flex items-center">
-                      <MapPin className="h-4 w-4 mr-2" />
-                      {event.location}
-                    </div>
+                    {activity.location && (
+                      <div className="flex items-center">
+                        <MapPin className="h-4 w-4 mr-2" />
+                        {activity.location}
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
             ))}
           </div>
+          
+          {activities.length === 0 && (
+            <div className="text-center py-8 text-muted-foreground">
+              Belum ada kegiatan mendatang.
+            </div>
+          )}
           
           <div className="text-center mt-8">
             <Button asChild>

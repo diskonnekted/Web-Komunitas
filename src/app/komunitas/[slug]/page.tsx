@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { CalendarDays, MapPin, Users, Mail, Phone, MessageSquare, Clock } from "lucide-react";
+import { CalendarDays, MapPin, Users, Mail, Phone, MessageSquare, Clock, Newspaper } from "lucide-react";
 import Link from "next/link";
 
 const categoryColors: Record<string, string> = {
@@ -22,7 +22,15 @@ const categoryColors: Record<string, string> = {
   PENDIDIKAN: "bg-teal-100 text-teal-800",
   INOVASI: "bg-violet-100 text-violet-800",
   LINGKUNGAN: "bg-lime-100 text-lime-800",
-  LAINNYA: "bg-gray-100 text-gray-800"
+  LAINNYA: "bg-gray-100 text-gray-800",
+};
+
+const newsCategoryColors: Record<string, string> = {
+  pengumuman: "bg-blue-100 text-blue-800",
+  kegiatan: "bg-green-100 text-green-800",
+  program: "bg-purple-100 text-purple-800",
+  pembangunan: "bg-orange-100 text-orange-800",
+  pelatihan: "bg-cyan-100 text-cyan-800"
 };
 
 interface CommunityDetailPageProps {
@@ -51,6 +59,12 @@ export default async function CommunityDetailPage({ params }: CommunityDetailPag
   if (!community) {
     notFound();
   }
+
+  const newsItems = await db.news.findMany({
+    where: { isPublished: true },
+    orderBy: { publishedAt: 'desc' },
+    take: 10,
+  });
 
   const members = community.members || [];
   const activities = community.activities || [];
@@ -104,12 +118,72 @@ export default async function CommunityDetailPage({ params }: CommunityDetailPag
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Main Content */}
           <div className="lg:col-span-2">
-            <Tabs defaultValue="about" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
+            <Tabs defaultValue="news" className="w-full">
+              <TabsList className="grid w-full grid-cols-4">
+                <TabsTrigger value="news">
+                  <Newspaper className="h-4 w-4 mr-1" />
+                  Berita
+                </TabsTrigger>
                 <TabsTrigger value="about">Tentang</TabsTrigger>
                 <TabsTrigger value="activities">Kegiatan</TabsTrigger>
                 <TabsTrigger value="members">Anggota</TabsTrigger>
               </TabsList>
+              
+              <TabsContent value="news" className="mt-6">
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold flex items-center">
+                    <Newspaper className="h-5 w-5 mr-2" />
+                    Berita Komunitas
+                  </h3>
+                  {newsItems.map((news) => (
+                    <Card key={news.id}>
+                      <CardHeader>
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <CardTitle className="text-lg">{news.title}</CardTitle>
+                            <CardDescription className="flex items-center gap-2 mt-1">
+                              <Badge className={newsCategoryColors[news.category as keyof typeof newsCategoryColors]}>
+                                {news.category}
+                              </Badge>
+                              <span className="text-xs">
+                                {new Date(news.publishedAt).toLocaleDateString('id-ID', { 
+                                  weekday: 'long', 
+                                  year: 'numeric', 
+                                  month: 'long', 
+                                  day: 'numeric' 
+                                })}
+                              </span>
+                              <span className="text-xs">• {news.author}</span>
+                            </CardDescription>
+                          </div>
+                          <Badge variant={news.isPublished ? 'default' : 'secondary'}>
+                            {news.isPublished ? 'Published' : 'Draft'}
+                          </Badge>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        {news.excerpt && (
+                          <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
+                            {news.excerpt}
+                          </p>
+                        )}
+                        <p className="text-sm line-clamp-3">
+                          {news.content.substring(0, 200)}...
+                        </p>
+                        <Button variant="link" className="p-0 h-auto mt-2" asChild>
+                          <Link href={`/berita`}>Baca Selengkapnya →</Link>
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
+                  {newsItems.length === 0 && (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <Newspaper className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p>Belum ada berita</p>
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
               
               <TabsContent value="about" className="mt-6">
                 <Card>
@@ -258,9 +332,9 @@ export default async function CommunityDetailPage({ params }: CommunityDetailPag
                   </Link>
                 </Button>
                 <Button asChild variant="outline" className="w-full">
-                  <Link href="/kegiatan">
-                    <CalendarDays className="h-4 w-4 mr-2" />
-                    Lihat Kegiatan Lainnya
+                  <Link href="/berita">
+                    <Newspaper className="h-4 w-4 mr-2" />
+                    Lihat Berita Lainnya
                   </Link>
                 </Button>
                 <Button asChild variant="outline" className="w-full">

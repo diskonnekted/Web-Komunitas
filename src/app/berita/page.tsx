@@ -1,137 +1,14 @@
-"use client";
-
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Search, Filter, Calendar, User, Eye, Share2, Clock, ArrowLeft } from "lucide-react";
+import { Search, Filter, Calendar, User, Eye, Share2, Clock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-
-// Mock data for development
-const newsItems = [
-  {
-    id: "1",
-    title: "Peluncuran Website Komunitas Kalurahan Pondokrejo",
-    slug: "peluncuran-website-komunitas-kalurahan-pondokrejo",
-    excerpt: "Dengan bangga kami persembahkan website resmi komunitas Kalurahan Pondokrejo sebagai wadah digital untuk seluruh warga.",
-    content: `Dengan bangga kami persembahkan website resmi komunitas Kalurahan Pondokrejo sebagai wadah digital untuk seluruh warga. Website ini dibangun dengan tujuan untuk memudahkan koordinasi, informasi, dan kolaborasi antar komunitas yang ada di Kalurahan Pondokrejo.
-
-Melalui website ini, diharapkan setiap komunitas dapat mempromosikan kegiatannya, warga dapat dengan mudah menemukan informasi tentang komunitas yang sesuai dengan minatnya, serta memfasilitasi komunikasi yang lebih efektif antar warga.
-
-Fitur-fitur yang tersedia antara lain:
-- Direktori komunitas lengkap
-- Jadwal kegiatan terpadu
-- Galeri foto dan video kegiatan
-- Peta lokasi kegiatan
-- Sistem pendaftaran komunitas baru
-- Informasi berita dan pengumuman
-
-Kami mengundang seluruh warga Kalurahan Pondokrejo untuk aktif berpartisipasi dalam pengembangan website ini demi kemajuan desa kita tercinta.`,
-    image: "/api/placeholder/800/400",
-    author: "Admin Kalurahan",
-    publishedAt: "2024-01-15T10:00:00",
-    isPublished: true,
-    views: 1250,
-    category: "pengumuman"
-  },
-  {
-    id: "2",
-    title: "Festival UMKM Pondokrejo 2024 Sukses Digelar",
-    slug: "festival-umkm-pondokrejo-2024-sukses-digelar",
-    excerpt: "Festival UMKM Pondokrejo 2024 berhasil menarik ratusan pengunjung dan mempromosikan produk lokal unggulan.",
-    content: `Festival UMKM Pondokrejo 2024 yang diselenggarakan pada tanggal 15 Februari 2024 berhasil mencapai kesuksesan yang luar biasa. Acara yang berlangsung di Balai Kalurahan ini berhasil menarik lebih dari 500 pengunjung dari berbagai wilayah.
-
-Festival ini menampilkan lebih dari 30 stand UMKM lokal yang memamerkan produk-produk unggulan seperti makanan tradisional, kerajinan tangan, produk pertanian, dan jasa layanan. Beberapa produk yang menjadi favorit pengunjung antara lain keripik singkong pedas, anyaman bambu, dan produk olahan susu kambing.
-
-Kepala Desa Pondokrejo, Bapak Ahmad Wijaya, dalam sambutannya menyatakan kebanggaannya terhadap semangat kewirausahaan warga. "Festival ini bukan hanya ajang promosi, tetapi juga bukti bahwa UMKM di Pondokrejo memiliki potensi yang luar biasa untuk berkembang," ujarnya.
-
-Acara juga dimeriahkan dengan berbagai hiburan seperti penampilan musik tradisional, demo memasak, dan seminar singkat tentang digital marketing untuk UMKM. Panitia berencana akan menjadikan festival ini sebagai acara tahunan untuk terus mendukung perkembangan UMKM lokal.`,
-    image: "/api/placeholder/800/400",
-    author: "Tim Humas",
-    publishedAt: "2024-02-16T14:30:00",
-    isPublished: true,
-    views: 890,
-    category: "kegiatan"
-  },
-  {
-    id: "3",
-    title: "Program Penghijauan Desa Tahun 2024",
-    slug: "program-penghijauan-desa-tahun-2024",
-    excerpt: "Kalurahan Pondokrejo meluncurkan program penghijauan dengan target menanam 1000 pohon dalam setahun.",
-    content: `Dalam rangka mendukung pelestarian lingkungan dan mitigasi perubahan iklim, Kalurahan Pondokrejo secara resmi meluncurkan Program Penghijauan Desa Tahun 2024. Program ini memiliki target menanam 1000 pohon di berbagai lokasi strategis di seluruh wilayah desa.
-
-Kepala Desa Ahmad Wijaya menjelaskan bahwa program ini merupakan bagian dari komitmen jangka panjang desa untuk menciptakan lingkungan yang lebih hijau dan sehat bagi generasi mendatang. "Kita tidak hanya menanam pohon, tetapi juga menanam harapan untuk masa depan yang lebih baik," ujarnya.
-
-Jenis pohon yang akan ditanam antara lain pohon keras seperti jati, mahoni, dan trembesi untuk penghijauan jalan desa, serta pohon buah-buahan seperti mangga, rambutan, dan durian untuk pekarangan warga.
-
-Program ini akan melibatkan seluruh elemen masyarakat termasuk komunitas Lingkungan Hijau, karang taruna, sekolah-sekolah, dan masyarakat umum. Setiap RT diwajibkan menyediakan lahan untuk penghijauan dan mengkoordinir warganya untuk berpartisipasi.
-
-Selain penanaman pohon, program ini juga mencakup edukasi tentang pentingnya menjaga lingkungan, cara budidaya tanaman yang baik, serta pemeliharaan pohon yang telah ditanam. Diharapkan dengan program ini, kualitas udara di Pondokrejo dapat membaik dan lingkungan menjadi lebih asri.`,
-    image: "/api/placeholder/800/400",
-    author: "Dinas Lingkungan",
-    publishedAt: "2024-01-20T09:00:00",
-    isPublished: true,
-    views: 654,
-    category: "program"
-  },
-  {
-    id: "4",
-    title: "Pembangunan Lapangan Olahraga Baru",
-    slug: "pembangunan-lapangan-olahraga-baru",
-    excerpt: "Pembangunan lapangan olahraga multifungsi tahap pertama telah selesai dan siap digunakan.",
-    content: `Setelah menunggu selama 6 bulan, pembangunan lapangan olahraga multifungsi tahap pertama di Kalurahan Pondokrejo akhirnya selesai. Lapangan yang terletak di dekat Balai Desa ini siap digunakan untuk berbagai kegiatan olahraga dan sosial.
-
-Lapangan seluas 2000 meter persegi ini dilengkapi dengan fasilitas antara lain:
-- Lapangan utama untuk sepak bola dan voli
-- Track lari 100 meter
-- Area pemanasan
-- Toilet umum
-- Area parkir
-- Penerangan lampu untuk kegiatan malam
-
-Ketua Komunitas Pemuda Olahraga, Bapak Budi Santoso, menyatakan rasa syukurnya atas selesainya pembangunan ini. "Ini adalah impian kami selama bertahun-tahun. Terima kasih kepada semua pihak yang telah mendukung pembangunan lapangan ini," ujarnya.
-
-Pembangunan tahap pertama ini menghabiskan dana sebesar Rp 250 juta yang bersumber dari dana desa dan swadaya masyarakat. Untuk tahap kedua, direncanakan akan dibangun tribun penonton dan ruang ganti pemain.
-
-Peresmian lapangan akan dilakukan pada bulan depan dengan menggelar turnamen sepak bola antar RT se-Kalurahan Pondokrejo. Komunitas Pemuda Olahraga juga telah menyusun jadwal rutin penggunaan lapangan untuk berbagai kegiatan olahraga.`,
-    image: "/api/placeholder/800/400",
-    author: "Tim Pembangunan",
-    publishedAt: "2024-02-01T11:00:00",
-    isPublished: true,
-    views: 523,
-    category: "pembangunan"
-  },
-  {
-    id: "5",
-    title: "Workshop Digital Marketing untuk UMKM",
-    slug: "workshop-digital-marketing-untuk-umkm",
-    excerpt: "Komunitas Internet Marketing mengadakan workshop gratis untuk membantu UMKM go digital.",
-    content: `Komunitas Internet Marketing Kalurahan Pondokrejo kembali mengadakan workshop gratis dengan tema "Digital Marketing untuk UMKM" yang diikuti oleh 25 pelaku UMKM lokal. Workshop ini bertujuan untuk membantu para pelaku usaha mikro kecil menengah dalam memasarkan produk mereka secara online.
-
-Workshop yang berlangsung selama 6 jam ini membahas berbagai topik penting antara lain:
-- Pembuatan toko online sederhana
-- Optimasi media sosial untuk bisnis
-- Fotografi produk yang menarik
-- Strategi content marketing
-- Penggunaan marketplace lokal
-
-Narasumber dalam workshop ini adalah Bapak Rizki Pratama, praktisi digital marketing yang telah berpengalaman lebih dari 10 tahun. Beliau membagikan tips dan trik praktis yang dapat langsung diterapkan oleh peserta.
-
-Salah satu peserta, Ibu Siti Aminah yang memiliki usaha keripik singkong, menyatakan bahwa workshop ini sangat bermanfaat. "Sekarang saya jadi tahu cara memfoto produk yang bagus dan cara promosi di media sosial yang efektif," ujarnya.
-
-Komunitas Internet Marketing berencana akan mengadakan workshop serupa secara rutin setiap 3 bulan sekali dengan topik yang berbeda-beda. Untuk informasi lebih lanjut, warga dapat menghubungi kontak yang tertera di website komunitas.`,
-    image: "/api/placeholder/800/400",
-    author: "Komunitas Internet Marketing",
-    publishedAt: "2024-01-25T13:00:00",
-    isPublished: true,
-    views: 432,
-    category: "pelatihan"
-  }
-];
+import { db } from "@/lib/db";
+import { useState } from "react";
 
 const categories = [
   { value: "ALL", label: "Semua Kategori" },
@@ -142,7 +19,7 @@ const categories = [
   { value: "pelatihan", label: "Pelatihan" }
 ];
 
-const categoryColors = {
+const categoryColors: Record<string, string> = {
   pengumuman: "bg-blue-100 text-blue-800",
   kegiatan: "bg-green-100 text-green-800",
   program: "bg-purple-100 text-purple-800",
@@ -150,21 +27,39 @@ const categoryColors = {
   pelatihan: "bg-cyan-100 text-cyan-800"
 };
 
-export default function NewsPage() {
+interface NewsItem {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  excerpt: string | null;
+  image: string | null;
+  author: string;
+  publishedAt: Date;
+  views: number;
+  category: string;
+}
+
+export default async function NewsPage() {
+  const newsItems = await db.news.findMany({
+    where: { isPublished: true },
+    orderBy: { publishedAt: 'desc' },
+  });
+
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [sortBy, setSortBy] = useState("date");
-  const [selectedNews, setSelectedNews] = useState<typeof newsItems[0] | null>(null);
+  const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
 
   const filteredNews = newsItems
-    .filter(news => {
+    .filter((news: NewsItem) => {
       const matchesSearch = news.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           news.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           news.excerpt?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            news.content.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = selectedCategory === "ALL" || news.category === selectedCategory;
       return matchesSearch && matchesCategory;
     })
-    .sort((a, b) => {
+    .sort((a: NewsItem, b: NewsItem) => {
       switch (sortBy) {
         case "date":
           return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
@@ -176,55 +71,6 @@ export default function NewsPage() {
           return 0;
       }
     });
-
-  const NewsCard = ({ news }: { news: typeof newsItems[0] }) => (
-    <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
-      <div className="relative aspect-video bg-muted overflow-hidden">
-        <Image
-          src={news.image}
-          alt={news.title}
-          fill
-          className="object-cover group-hover:scale-105 transition-transform duration-300"
-        />
-        <div className="absolute top-2 right-2">
-          <Badge className={categoryColors[news.category as keyof typeof categoryColors]}>
-            {news.category}
-          </Badge>
-        </div>
-      </div>
-      <CardContent className="p-6">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center text-sm text-muted-foreground">
-            <Calendar className="h-4 w-4 mr-1" />
-            {new Date(news.publishedAt).toLocaleDateString('id-ID', { 
-              day: 'numeric', 
-              month: 'short', 
-              year: 'numeric' 
-            })}
-          </div>
-          <div className="flex items-center text-sm text-muted-foreground">
-            <Eye className="h-4 w-4 mr-1" />
-            {news.views}
-          </div>
-        </div>
-        <h3 className="font-semibold text-lg mb-2 line-clamp-2 group-hover:text-primary transition-colors">
-          {news.title}
-        </h3>
-        <p className="text-muted-foreground mb-4 line-clamp-3">
-          {news.excerpt}
-        </p>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center text-sm text-muted-foreground">
-            <User className="h-4 w-4 mr-1" />
-            {news.author}
-          </div>
-          <Button variant="outline" size="sm">
-            Baca Selengkapnya
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
-  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -289,11 +135,52 @@ export default function NewsPage() {
 
         {/* News Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredNews.map((news) => (
+          {filteredNews.map((news: NewsItem) => (
             <Dialog key={news.id}>
               <DialogTrigger asChild>
-                <div onClick={() => setSelectedNews(news)}>
-                  <NewsCard news={news} />
+                <div className="cursor-pointer" onClick={() => setSelectedNews(news)}>
+                  <Card className="hover:shadow-lg transition-shadow h-full">
+                    {news.image && (
+                      <div className="relative aspect-video bg-muted overflow-hidden">
+                        <Image
+                          src={news.image}
+                          alt={news.title}
+                          fill
+                          className="object-cover hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                    )}
+                    <CardHeader>
+                      <div className="flex items-center justify-between mb-2">
+                        <Badge className={categoryColors[news.category as keyof typeof categoryColors]}>
+                          {news.category}
+                        </Badge>
+                      </div>
+                      <CardTitle className="text-lg line-clamp-2">{news.title}</CardTitle>
+                      <CardDescription className="line-clamp-2">
+                        {news.excerpt || news.content.substring(0, 100)}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-center justify-between text-sm text-muted-foreground">
+                        <div className="flex items-center">
+                          <Calendar className="h-4 w-4 mr-1" />
+                          {new Date(news.publishedAt).toLocaleDateString('id-ID', { 
+                            day: 'numeric', 
+                            month: 'short', 
+                            year: 'numeric' 
+                          })}
+                        </div>
+                        <div className="flex items-center">
+                          <Eye className="h-4 w-4 mr-1" />
+                          {news.views}
+                        </div>
+                      </div>
+                      <Button variant="outline" size="sm" className="w-full mt-4">
+                        Baca Selengkapnya
+                      </Button>
+                    </CardContent>
+                  </Card>
                 </div>
               </DialogTrigger>
               <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">

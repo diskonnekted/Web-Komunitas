@@ -7,12 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Users, 
-  Calendar, 
-  FileText, 
-  Image as ImageIcon, 
-  MapPin, 
+import {
+  Users,
+  Calendar,
+  FileText,
+  Image as ImageIcon,
+  MapPin,
   AlertCircle,
   TrendingUp,
   LogOut,
@@ -20,94 +20,198 @@ import {
   Plus,
   Eye,
   Edit,
-  Trash2
+  Trash2,
+  Check,
+  X as XIcon,
 } from "lucide-react";
 
-// Mock data for dashboard
-const dashboardStats = {
-  totalCommunities: 8,
-  activeCommunities: 8,
-  totalActivities: 15,
-  upcomingActivities: 6,
-  totalNews: 5,
-  totalGallery: 8,
-  pendingRequests: 3
+interface Community {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  category: string;
+  isActive: boolean;
+  members: { id: string }[];
+}
+
+interface Activity {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  location: string | null;
+  communityId: string;
+  community: { name: string };
+  isActive: boolean;
+}
+
+interface NewsItem {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  excerpt: string | null;
+  image: string | null;
+  author: string;
+  category: string;
+  views: number;
+  isPublished: boolean;
+  publishedAt: string;
+}
+
+interface CommunityRequest {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  contact: string;
+  email: string | null;
+  phone: string | null;
+  address: string | null;
+  reason: string;
+  status: string;
+  createdAt: string;
+}
+
+const categoryColors: Record<string, string> = {
+  PERTANIAN: "bg-green-100 text-green-800",
+  EKONOMI: "bg-blue-100 text-blue-800",
+  DIGITAL: "bg-indigo-100 text-indigo-800",
+  OLAHRAGA: "bg-emerald-100 text-emerald-800",
+  KESEHATAN: "bg-red-100 text-red-800",
+  RELIGI: "bg-yellow-100 text-yellow-800",
+  SOSIAL: "bg-orange-100 text-orange-800",
+  BUDAYA: "bg-purple-100 text-purple-800",
+  KELUARGA: "bg-pink-100 text-pink-800",
+  PEMUDA: "bg-cyan-100 text-cyan-800",
+  PENDIDIKAN: "bg-teal-100 text-teal-800",
+  INOVASI: "bg-violet-100 text-violet-800",
+  LINGKUNGAN: "bg-lime-100 text-lime-800",
+  LAINNYA: "bg-gray-100 text-gray-800",
 };
-
-const recentActivities = [
-  {
-    id: 1,
-    title: "Festival UMKM Pondokrejo",
-    date: "2024-02-15",
-    community: "UMKM Pondokrejo",
-    status: "completed"
-  },
-  {
-    id: 2,
-    title: "Turnamen Bola Voli",
-    date: "2024-02-20",
-    community: "Pemuda Olahraga",
-    status: "upcoming"
-  },
-  {
-    id: 3,
-    title: "Pembersihan Sungai Code",
-    date: "2024-02-25",
-    community: "Lingkungan Hijau",
-    status: "upcoming"
-  }
-];
-
-const pendingRequests = [
-  {
-    id: 1,
-    name: "Komunitas Petani Muda",
-    category: "PERTANIAN",
-    contact: "Budi Santoso",
-    submittedAt: "2024-02-10",
-    reason: "Membantu petani muda dalam pengembangan pertanian modern"
-  },
-  {
-    id: 2,
-    name: "Komunitas Kesenian Jawa",
-    category: "SENI",
-    contact: "Siti Nurhaliza",
-    submittedAt: "2024-02-12",
-    reason: "Melestarikan kesenian tradisional Jawa di kalangan generasi muda"
-  },
-  {
-    id: 3,
-    name: "Komunitas Kesehatan Holistik",
-    category: "KESEHATAN",
-    contact: "Dr. Ahmad",
-    submittedAt: "2024-02-14",
-    reason: "Promosi kesehatan holistik dan pengobatan tradisional"
-  }
-];
 
 export default function AdminDashboard() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
 
+  // Real data state
+  const [stats, setStats] = useState({
+    totalCommunities: 0,
+    activeCommunities: 0,
+    totalActivities: 0,
+    upcomingActivities: 0,
+    totalNews: 0,
+    totalGallery: 0,
+    pendingRequests: 0,
+  });
+
+  const [communities, setCommunities] = useState<Community[]>([]);
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
+  const [requests, setRequests] = useState<CommunityRequest[]>([]);
+
   useEffect(() => {
-    // Check if admin is logged in
     const isLoggedIn = localStorage.getItem("isAdminLoggedIn");
     if (!isLoggedIn) {
       router.push("/admin/login");
       return;
     }
-    
-    // Simulate loading data
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
+    fetchData();
   }, [router]);
+
+  const fetchData = async () => {
+    try {
+      const [communitiesRes, activitiesRes, newsRes, requestsRes] = await Promise.all([
+        fetch("/api/communities-full"),
+        fetch("/api/activities"),
+        fetch("/api/news"),
+        fetch("/api/community-requests"),
+      ]);
+
+      const communitiesData: Community[] = await communitiesRes.json();
+      const activitiesData: Activity[] = await activitiesRes.json();
+      const newsData: NewsItem[] = await newsRes.json();
+      const requestsData: CommunityRequest[] = await requestsRes.json();
+
+      const now = new Date();
+
+      setCommunities(communitiesData);
+      setActivities(activitiesData);
+      setNewsItems(newsData);
+      setRequests(requestsData);
+
+      setStats({
+        totalCommunities: communitiesData.length,
+        activeCommunities: communitiesData.filter((c) => c.isActive).length,
+        totalActivities: activitiesData.length,
+        upcomingActivities: activitiesData.filter(
+          (a) => new Date(a.startDate) >= now && a.isActive
+        ).length,
+        totalNews: newsData.filter((n) => n.isPublished).length,
+        totalGallery: 0,
+        pendingRequests: requestsData.filter((r) => r.status === "PENDING").length,
+      });
+    } catch (error) {
+      console.error("Failed to fetch data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("isAdminLoggedIn");
     router.push("/admin/login");
+  };
+
+  const handleDeleteCommunity = async (id: string) => {
+    if (!confirm("Apakah Anda yakin ingin menghapus komunitas ini?")) return;
+    try {
+      await fetch(`/api/communities/${id}`, { method: "DELETE" });
+      fetchData();
+    } catch (error) {
+      console.error("Failed to delete community:", error);
+    }
+  };
+
+  const handleApproveRequest = async (id: string) => {
+    if (!confirm("Terima permintaan ini?")) return;
+    try {
+      await fetch(`/api/community-requests/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "APPROVED" }),
+      });
+      fetchData();
+    } catch (error) {
+      console.error("Failed to approve request:", error);
+    }
+  };
+
+  const handleRejectRequest = async (id: string) => {
+    if (!confirm("Tolak permintaan ini?")) return;
+    try {
+      await fetch(`/api/community-requests/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "REJECTED" }),
+      });
+      fetchData();
+    } catch (error) {
+      console.error("Failed to reject request:", error);
+    }
+  };
+
+  const handleDeleteActivity = async (id: string) => {
+    if (!confirm("Apakah Anda yakin ingin menghapus kegiatan ini?")) return;
+    try {
+      await fetch(`/api/activities/${id}`, { method: "DELETE" });
+      fetchData();
+    } catch (error) {
+      console.error("Failed to delete activity:", error);
+    }
   };
 
   if (isLoading) {
@@ -131,7 +235,7 @@ export default function AdminDashboard() {
               <h1 className="text-xl font-bold">Admin Panel - Kalurahan Pondokrejo</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <Button variant="secondary" size="sm">
+              <Button variant="secondary" size="sm" onClick={() => router.push("/admin/dashboard")}>
                 <Settings className="h-4 w-4 mr-2" />
                 Pengaturan
               </Button>
@@ -162,9 +266,9 @@ export default function AdminDashboard() {
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dashboardStats.totalCommunities}</div>
+              <div className="text-2xl font-bold">{stats.totalCommunities}</div>
               <p className="text-xs text-muted-foreground">
-                {dashboardStats.activeCommunities} aktif
+                {stats.activeCommunities} aktif
               </p>
             </CardContent>
           </Card>
@@ -175,9 +279,9 @@ export default function AdminDashboard() {
               <Calendar className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dashboardStats.totalActivities}</div>
+              <div className="text-2xl font-bold">{stats.totalActivities}</div>
               <p className="text-xs text-muted-foreground">
-                {dashboardStats.upcomingActivities} akan datang
+                {stats.upcomingActivities} akan datang
               </p>
             </CardContent>
           </Card>
@@ -188,7 +292,7 @@ export default function AdminDashboard() {
               <FileText className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dashboardStats.totalNews}</div>
+              <div className="text-2xl font-bold">{stats.totalNews}</div>
               <p className="text-xs text-muted-foreground">
                 Artikel published
               </p>
@@ -201,7 +305,7 @@ export default function AdminDashboard() {
               <AlertCircle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dashboardStats.pendingRequests}</div>
+              <div className="text-2xl font-bold">{stats.pendingRequests}</div>
               <p className="text-xs text-muted-foreground">
                 Menunggu persetujuan
               </p>
@@ -218,8 +322,8 @@ export default function AdminDashboard() {
             <TabsTrigger value="activities">Kegiatan</TabsTrigger>
           </TabsList>
 
+          {/* Overview Tab */}
           <TabsContent value="overview" className="space-y-6">
-            {/* Recent Activities */}
             <Card>
               <CardHeader>
                 <CardTitle>Kegiatan Terkini</CardTitle>
@@ -229,24 +333,30 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {recentActivities.map((activity) => (
-                    <div key={activity.id} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div>
-                        <h4 className="font-medium">{activity.title}</h4>
-                        <p className="text-sm text-muted-foreground">{activity.community}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {new Date(activity.date).toLocaleDateString('id-ID', { 
-                            year: 'numeric', 
-                            month: 'long', 
-                            day: 'numeric' 
-                          })}
-                        </p>
+                  {activities
+                    .filter((a) => new Date(a.startDate) >= new Date())
+                    .slice(0, 5)
+                    .map((activity) => (
+                      <div key={activity.id} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div>
+                          <h4 className="font-medium">{activity.title}</h4>
+                          <p className="text-sm text-muted-foreground">{activity.community.name}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(activity.startDate).toLocaleDateString('id-ID', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                            })}
+                          </p>
+                        </div>
+                        <Badge variant="default">Akan Datang</Badge>
                       </div>
-                      <Badge variant={activity.status === 'completed' ? 'secondary' : 'default'}>
-                        {activity.status === 'completed' ? 'Selesai' : 'Akan Datang'}
-                      </Badge>
+                    ))}
+                  {activities.filter((a) => new Date(a.startDate) >= new Date()).length === 0 && (
+                    <div className="text-center py-8 text-muted-foreground">
+                      Tidak ada kegiatan akan datang
                     </div>
-                  ))}
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -290,6 +400,7 @@ export default function AdminDashboard() {
             </Card>
           </TabsContent>
 
+          {/* Communities Tab */}
           <TabsContent value="communities" className="space-y-6">
             <Card>
               <CardHeader>
@@ -300,50 +411,60 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {/* Sample communities list */}
-                  <div className="border rounded-lg">
-                    <div className="p-4 border-b bg-muted/50">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="font-medium">UMKM Pondokrejo</h4>
-                          <p className="text-sm text-muted-foreground">45 anggota • Aktif</p>
+                  {communities.map((community) => (
+                    <div key={community.id} className="border rounded-lg p-4">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <Badge className={categoryColors[community.category as keyof typeof categoryColors]}>
+                              {community.category}
+                            </Badge>
+                            <Badge variant={community.isActive ? "default" : "secondary"}>
+                              {community.isActive ? "Aktif" : "Nonaktif"}
+                            </Badge>
+                          </div>
+                          <h4 className="font-medium">{community.name}</h4>
+                          <p className="text-sm text-muted-foreground">
+                            {community.members.length} anggota
+                          </p>
                         </div>
                         <div className="flex space-x-2">
-                          <Button variant="outline" size="sm">
-                            <Eye className="h-4 w-4 mr-1" />
-                            Lihat
+                          <Button variant="outline" size="sm" asChild>
+                            <Link href={`/komunitas/${community.slug}`}>
+                              <Eye className="h-4 w-4 mr-1" />
+                              Lihat
+                            </Link>
                           </Button>
-                          <Button variant="outline" size="sm">
-                            <Edit className="h-4 w-4 mr-1" />
-                            Edit
+                          <Button variant="outline" size="sm" asChild>
+                            <Link href={`/admin/communities`}>
+                              <Edit className="h-4 w-4 mr-1" />
+                              Edit
+                            </Link>
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-destructive hover:bg-destructive/10"
+                            onClick={() => handleDeleteCommunity(community.id)}
+                          >
+                            <Trash2 className="h-4 w-4 mr-1" />
+                            Hapus
                           </Button>
                         </div>
                       </div>
                     </div>
-                    <div className="p-4 border-b">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="font-medium">Pemuda Olahraga</h4>
-                          <p className="text-sm text-muted-foreground">32 anggota • Aktif</p>
-                        </div>
-                        <div className="flex space-x-2">
-                          <Button variant="outline" size="sm">
-                            <Eye className="h-4 w-4 mr-1" />
-                            Lihat
-                          </Button>
-                          <Button variant="outline" size="sm">
-                            <Edit className="h-4 w-4 mr-1" />
-                            Edit
-                          </Button>
-                        </div>
-                      </div>
+                  ))}
+                  {communities.length === 0 && (
+                    <div className="text-center py-8 text-muted-foreground">
+                      Belum ada komunitas
                     </div>
-                  </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
 
+          {/* Requests Tab */}
           <TabsContent value="requests" className="space-y-6">
             <Card>
               <CardHeader>
@@ -354,7 +475,7 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {pendingRequests.map((request) => (
+                  {requests.map((request) => (
                     <div key={request.id} className="border rounded-lg p-4">
                       <div className="flex items-start justify-between mb-3">
                         <div>
@@ -362,12 +483,15 @@ export default function AdminDashboard() {
                           <Badge variant="outline" className="mt-1">
                             {request.category}
                           </Badge>
+                          <Badge variant={request.status === "PENDING" ? "default" : request.status === "APPROVED" ? "secondary" : "outline"} className="ml-2">
+                            {request.status === "PENDING" ? "Menunggu" : request.status === "APPROVED" ? "Disetujui" : "Ditolak"}
+                          </Badge>
                         </div>
                         <div className="text-sm text-muted-foreground">
-                          {new Date(request.submittedAt).toLocaleDateString('id-ID', { 
-                            year: 'numeric', 
-                            month: 'short', 
-                            day: 'numeric' 
+                          {new Date(request.createdAt).toLocaleDateString('id-ID', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
                           })}
                         </div>
                       </div>
@@ -376,8 +500,14 @@ export default function AdminDashboard() {
                       </p>
                       <p className="text-sm mb-3">{request.reason}</p>
                       <div className="flex space-x-2">
-                        <Button size="sm">Terima</Button>
-                        <Button variant="outline" size="sm">Tolak</Button>
+                        <Button size="sm" onClick={() => handleApproveRequest(request.id)}>
+                          <Check className="h-4 w-4 mr-1" />
+                          Terima
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={() => handleRejectRequest(request.id)}>
+                          <XIcon className="h-4 w-4 mr-1" />
+                          Tolak
+                        </Button>
                         <Button variant="outline" size="sm">
                           <Eye className="h-4 w-4 mr-1" />
                           Detail
@@ -385,11 +515,17 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                   ))}
+                  {requests.length === 0 && (
+                    <div className="text-center py-8 text-muted-foreground">
+                      Belum ada permintaan
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
 
+          {/* Activities Tab */}
           <TabsContent value="activities" className="space-y-6">
             <Card>
               <CardHeader>
@@ -402,34 +538,38 @@ export default function AdminDashboard() {
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
                     <h4 className="font-medium">Kegiatan Akan Datang</h4>
-                    <Button size="sm">
-                      <Plus className="h-4 w-4 mr-1" />
-                      Tambah Kegiatan
+                    <Button asChild size="sm">
+                      <Link href="/admin/activities">
+                        <Plus className="h-4 w-4 mr-1" />
+                        Tambah Kegiatan
+                      </Link>
                     </Button>
                   </div>
-                  
-                  {recentActivities
-                    .filter(activity => activity.status === 'upcoming')
+
+                  {activities
+                    .filter((a) => new Date(a.startDate) >= new Date())
                     .map((activity) => (
                       <div key={activity.id} className="border rounded-lg p-4">
                         <div className="flex items-center justify-between">
                           <div>
                             <h4 className="font-medium">{activity.title}</h4>
-                            <p className="text-sm text-muted-foreground">{activity.community}</p>
+                            <p className="text-sm text-muted-foreground">{activity.community.name}</p>
                             <p className="text-xs text-muted-foreground">
-                              {new Date(activity.date).toLocaleDateString('id-ID', { 
-                                year: 'numeric', 
-                                month: 'long', 
-                                day: 'numeric' 
+                              {new Date(activity.startDate).toLocaleDateString('id-ID', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
                               })}
                             </p>
                           </div>
                           <div className="flex space-x-2">
-                            <Button variant="outline" size="sm">
-                              <Edit className="h-4 w-4 mr-1" />
-                              Edit
+                            <Button variant="outline" size="sm" asChild>
+                              <Link href={`/admin/activities`}>
+                                <Edit className="h-4 w-4 mr-1" />
+                                Edit
+                              </Link>
                             </Button>
-                            <Button variant="outline" size="sm">
+                            <Button variant="outline" size="sm" onClick={() => handleDeleteActivity(activity.id)}>
                               <Trash2 className="h-4 w-4 mr-1" />
                               Hapus
                             </Button>
@@ -437,6 +577,11 @@ export default function AdminDashboard() {
                         </div>
                       </div>
                     ))}
+                  {activities.filter((a) => new Date(a.startDate) >= new Date()).length === 0 && (
+                    <div className="text-center py-8 text-muted-foreground">
+                      Tidak ada kegiatan akan datang
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>

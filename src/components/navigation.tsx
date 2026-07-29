@@ -10,10 +10,9 @@ import { Menu, Home, Users, Calendar, MapPin, Images, Newspaper, UserPlus } from
 const navigation = [
   { name: "Beranda", href: "/", icon: Home },
   { name: "Komunitas", href: "/komunitas", icon: Users },
-  { name: "Kegiatan", href: "/kegiatan", icon: Calendar },
+  { name: "Berita", href: "/berita", icon: Newspaper },
   { name: "Lokasi", href: "/lokasi", icon: MapPin },
   { name: "Galeri", href: "/galeri", icon: Images },
-  { name: "Berita", href: "/berita", icon: Newspaper },
   { name: "Daftar Komunitas", href: "/daftar-komunitas", icon: UserPlus },
 ];
 
